@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "dev": "nodemon --ignore migrations/ server.js",
+    "start": "NODE_ENV=production node server.js",
+    "test": "standard",
+    "migrate": "knex migrate:latest"
+  },
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.16.1",
+    "cors": "^2.8.1",
+    "express": "^4.14",
+    "express-session": "^1.15.1",
+    "hostile": "^1.3.0",
+    "knex": "^0.12.7",
+    "mysql": "^2.13.0",
+    "nodemon": "^1.11.0",
+    "standard": "^9.0.0"
+  },
+  "devDependencies": {
+    "babel-preset-stage-0": "^6.22.0"
+  }
+}
