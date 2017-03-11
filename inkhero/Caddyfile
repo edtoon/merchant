@@ -1,0 +1,10 @@
+inkhero.merchant.gg {
+  gzip
+  root /srv
+  basicauth /upload dev devupload
+  upload /upload {
+    to "/srv/content"
+    filenames_form NFC
+    silent_auth_errors
+  }
+}

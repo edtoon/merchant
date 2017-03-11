@@ -8,7 +8,7 @@ BASE_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 . "${BASE_DIR}/config.sh"
 
-for module in api login ui www
+for module in api login ui www inkhero
 do
     echo "======================"
     echo "Running: ${module}"
