@@ -1,4 +1,6 @@
 inkhero.merchant.gg {
+  log stdout
+  tls support@merchant.gg
   gzip
   root /srv
   basicauth /upload dev devupload

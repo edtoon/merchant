@@ -8,4 +8,10 @@ BIN_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 . "${BIN_DIR}/../config.sh"
 
-rsync -Pav -e 'ssh -C' ${excludes} "${BIN_DIR}/../" "inkhero.merchant.gg:/mnt/gg/merchant/${APP_NAME}/src/current"
+SITE="${SITE:=inkhero.merchant.gg}"
+SRC_DIR="${SRC_DIR:=${BIN_DIR}/../}"
+TARGET_DIR="${TARGET_DIR:=/mnt/gg/merchant/${APP_NAME}/src/current}"
+
+sudo chown -R "${USER}" "${SRC_DIR}"
+ssh "${SITE}" -- chown -R ubuntu:ubuntu "${TARGET_DIR}"
+rsync -Pav -e 'ssh -C' "${SRC_DIR}/" "${SITE}:${TARGET_DIR}"

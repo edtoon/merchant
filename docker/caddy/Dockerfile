@@ -16,4 +16,4 @@ VOLUME /root/.caddy
 WORKDIR /srv
 
 ENTRYPOINT ["/usr/bin/caddy"]
-CMD ["--conf", "/etc/Caddyfile", "--log", "stdout"]
+CMD ["-agree", "-conf", "/etc/Caddyfile", "-log", "stdout"]
