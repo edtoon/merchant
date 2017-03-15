@@ -18,7 +18,7 @@ then
         status="1"
     fi
 else
-    >2 echo "Skipping ${DB_DOCKER}, ${APP_NAME} uses RDS in non-dev environments"
+    >&2 echo "Skipping ${DB_DOCKER}, ${APP_NAME} uses RDS in non-dev environments"
 fi
 
 exit "${status}"
