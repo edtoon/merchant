@@ -40,7 +40,6 @@ export DB_USERNAME="${APP_NAME}_user"
 export DB_PASSWORD="${APP_NAME}_pass"
 export DB_ROOT_PASSWORD="${APP_NAME}_root"
 export DB_DOCKER="${APP_NAME}_db"
-export UI_PORT=3000
 export WWW_HOST="www.${BASE_HOST}"
 export LOGIN_HOST="login.${BASE_HOST}"
 export API_HOST="api.${BASE_HOST}"
