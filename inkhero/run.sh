@@ -10,7 +10,7 @@ SITE_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 SITE_DOCKER="${SITE_DOCKER:=${APP_NAME}_inkhero}"
 
-if [ "production" != "${NODE_ENV}" ];
+if [ "production" != "${ENV}" ];
 then
     exit 0
 fi
