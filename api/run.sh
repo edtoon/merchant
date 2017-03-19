@@ -31,7 +31,7 @@ then
     HTTP_ARGS="-e BASE_HOST=${BASE_HOST} -e HOST=${API_HOST}"
     VOL_ARGS="-w /app -v ${API_DIR}:/app"
 
-    sudo docker run -it --rm ${VOL_ARGS}:ro ${DB_ARGS} merchantgg/node npm run migrate
+    sudo docker run -it --rm ${VOL_ARGS}:ro ${DB_ARGS} merchantgg/node npm run migrate || true
     sudo docker run -d ${VOL_ARGS} ${DB_ARGS} ${HTTP_ARGS} --name "${API_DOCKER}" \
         -e NODE_ENV="${NODE_ENV}" \
         merchantgg/node bash -c "npm rebuild && npm run ${NODE_ACTION}"
