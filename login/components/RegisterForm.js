@@ -100,7 +100,7 @@ export default class RegisterForm extends React.Component {
           console.log('Response status: ' + response.status)
 
           if (response.status === 200) {
-            window.location = '/login'
+            window.location = '/'
           }
         })
         .catch(error => {
