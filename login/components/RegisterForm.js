@@ -8,8 +8,8 @@ import {
   Label
 } from 're-bulma'
 import fetch from 'isomorphic-fetch'
-import { validateEmail, validatePassword } from '../utils/validators'
-import { apiHost } from '../utils/hosts'
+import { apiHost } from 'gg-common/utils/hosts'
+import { validateEmail, validatePassword } from 'gg-common/utils/validators'
 
 export default class RegisterForm extends React.Component {
   constructor (props) {

@@ -10,10 +10,10 @@ BASE_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 "${BASE_DIR}/bin/run_mysql.sh"
 
-for build_file in `ls ${BASE_DIR}/*/build.sh`
+for module in common api login ui www inkhero
 do
     echo "======================"
-    echo "Running: ${build_file}"
+    echo "Building: ${module}"
     echo "======================"
-    "${build_file}"
+    "${BASE_DIR}/${module}/build.sh"
 done

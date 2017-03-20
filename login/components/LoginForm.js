@@ -9,8 +9,8 @@ import {
   Notification
 } from 're-bulma'
 import fetch from 'isomorphic-fetch'
-import { validateEmail, validatePassword } from '../utils/validators'
-import { apiHost, uiHost } from '../utils/hosts'
+import { apiHost, uiHost } from 'gg-common/utils/hosts'
+import { validateEmail, validatePassword } from 'gg-common/utils/validators'
 
 export default class LoginForm extends React.Component {
   constructor (props) {
@@ -91,7 +91,9 @@ export default class LoginForm extends React.Component {
               fetchErrorMessage: ''
             })
 
-            window.location = '//' + uiHost()
+            response.text().then(text => {
+              window.location = '//' + uiHost() + '?token=' + text
+            })
           } else {
             response.text().then(text => {
               this.setState({

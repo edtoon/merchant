@@ -27,7 +27,7 @@ then
     sudo docker build -t merchantgg/node "${LOGIN_DIR}/../docker/node"
 
     HTTP_ARGS="-e BASE_HOST=${BASE_HOST} -e HOST=${LOGIN_HOST}"
-    VOL_ARGS="-w /app -v ${LOGIN_DIR}:/app"
+    VOL_ARGS="-w /app -v ${LOGIN_DIR}:/app -v ${LOGIN_DIR}/../common:/common:ro"
 
     sudo docker run -d ${VOL_ARGS} ${HTTP_ARGS} --name "${LOGIN_DOCKER}" \
         -e NODE_ENV="${NODE_ENV}" \

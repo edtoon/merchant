@@ -1,9 +1,15 @@
-const express = require('express')
-const session = require('express-session')
-const cors = require('cors')
-const bodyParser = require('body-parser')
-const bcrypt = require('bcrypt')
-const knex = require('knex')({
+import { sign as jwtSign } from 'jsonwebtoken'
+import morgan from 'morgan'
+import express from 'express'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+import bcrypt from 'bcrypt'
+import uuidV4 from 'uuid/v4'
+import Knex from 'knex'
+
+import { currentHost, uiHost } from 'gg-common/utils/hosts'
+
+const knex = Knex({
   client: 'mysql',
   connection: {
     host: process.env.DB_HOST,
@@ -34,24 +40,7 @@ server.use(bodyParser.json())
 server.use(bodyParser.urlencoded({
   extended: true
 }))
-server.use(session({
-  name: 'gg-merchant-app',
-  secret: 'This is not so secret, is it!',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    domain: '.' + process.env.BASE_HOST
-  }
-}))
-
-server.get('/logout', (req, res) => {
-  if (req.session && req.session.userId) {
-    req.session.userId = null
-  }
-
-  res.redirect('/')
-})
+server.use(morgan('combined'))
 
 server.options('/login', cors(loginCorsOptions))
 server.post('/login', cors(loginCorsOptions), (req, res) => {
@@ -62,10 +51,8 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
     res.status(400)
     res.send('No password supplied')
   } else {
-    knex.select(['id', 'name', 'password']).from('users').where('name', req.body.username)
+    knex.select(['id', 'name', 'password']).from('user').where('name', req.body.username)
       .then(rows => {
-        console.log('Result: ', rows)
-
         if (!rows || rows.length !== 1) {
           res.status(400)
           res.send('No user found')
@@ -74,8 +61,45 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
 
           bcrypt.compare(req.body.password, data.password.toString('utf-8'), (error, result) => {
             if (result) {
-              req.session.userId = data.id
-              res.send('Login succeeded')
+              const uuid = uuidV4()
+              const proto = 'http' + (req.secure ? 's' : '')
+              const issuer = proto + '://' + currentHost
+              const audience = [proto + '://' + uiHost()]
+
+              jwtSign(
+                {},
+                'MySecret',
+                {
+                  algorithm: 'HS512',
+                  audience,
+                  issuer,
+                  jwtid: uuid,
+                  subject: '' + data.id,
+                  expiresIn: '30s'
+                },
+                (error, token) => {
+                  if (error) {
+                    console.log('JWT error: ', error)
+                    res.status(400)
+                    res.send('Failed to generate authentication token')
+                  } else {
+                    knex('auth_ticket').insert({
+                      user_id: data.id,
+                      uuid: knex.raw('UNHEX(REPLACE("' + uuid + '","-",""))'),
+                      created_at: knex.raw('UNIX_TIMESTAMP()')
+                    })
+                      .then(() => {
+                        console.log('JWT: ', token)
+                        res.json({token})
+                      })
+                      .catch(error => {
+                        console.log('Insert error: ', error)
+                        res.status(400)
+                        res.send('Failed to store authentication ticket')
+                      })
+                  }
+                }
+              )
             } else {
               if (error) {
                 console.log('Bcrypt error: ', error)
@@ -104,7 +128,7 @@ server.post('/register', cors(loginCorsOptions), (req, res) => {
     res.status(400)
     res.send('No password supplied')
   } else {
-    knex.select(knex.raw('1')).from('users').where('name', req.body.username)
+    knex.select(knex.raw('1')).from('user').where('name', req.body.username)
       .then(rows => {
         if (rows && rows.length === 1) {
           res.status(400)
@@ -119,7 +143,7 @@ server.post('/register', cors(loginCorsOptions), (req, res) => {
               res.status(400)
               res.send('Error encrypting password')
             } else {
-              knex('users').insert({name: req.body.username, password: bcryptHash})
+              knex('user').insert({name: req.body.username, password: bcryptHash})
                 .then(() => {
                   res.send('Registration succeeded')
                 })
@@ -138,6 +162,11 @@ server.post('/register', cors(loginCorsOptions), (req, res) => {
         res.send('Error occured')
       })
   }
+})
+
+server.get('/', (req, res) => {
+  res.status(200)
+  res.send('Request received by ' + currentHost + '!')
 })
 
 server.listen(80, (err) => {

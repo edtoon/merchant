@@ -29,9 +29,9 @@ then
     DB_HOST="$(sudo docker inspect --format "{{.NetworkSettings.IPAddress}}" "${DB_DOCKER}")"
     DB_ARGS="--link ${DB_DOCKER}:${DB_DOCKER} -e DB_HOST=${DB_DOCKER} -e DB_DATABASE=${DB_DATABASE} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD}"
     HTTP_ARGS="-e BASE_HOST=${BASE_HOST} -e HOST=${API_HOST}"
-    VOL_ARGS="-w /app -v ${API_DIR}:/app"
+    VOL_ARGS="-w /app -v ${API_DIR}:/app -v ${API_DIR}/../common:/common:ro"
 
-    sudo docker run -it --rm ${VOL_ARGS}:ro ${DB_ARGS} merchantgg/node npm run migrate || true
+    sudo docker run -it --rm ${VOL_ARGS} ${DB_ARGS} merchantgg/node npm run migrate || true
     sudo docker run -d ${VOL_ARGS} ${DB_ARGS} ${HTTP_ARGS} --name "${API_DOCKER}" \
         -e NODE_ENV="${NODE_ENV}" \
         merchantgg/node bash -c "npm rebuild && npm run ${NODE_ACTION}"

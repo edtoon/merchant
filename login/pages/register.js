@@ -15,7 +15,7 @@ import {
   Title
 } from 're-bulma'
 import RegisterForm from '../components/RegisterForm'
-import { wwwHost } from '../utils/hosts'
+import { wwwHost } from 'gg-common/utils/hosts'
 
 export default () => (
   <Hero size='isFullheight' color='isDark' isBold>
