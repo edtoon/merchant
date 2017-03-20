@@ -91,8 +91,8 @@ export default class LoginForm extends React.Component {
               fetchErrorMessage: ''
             })
 
-            response.text().then(text => {
-              window.location = '//' + uiHost() + '?token=' + text
+            response.json().then(result => {
+              window.location = '//' + uiHost() + '?token=' + encodeURIComponent(result.token)
             })
           } else {
             response.text().then(text => {
