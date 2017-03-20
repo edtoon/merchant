@@ -1,8 +1,8 @@
 import { sign as jwtSign } from 'jsonwebtoken'
-import morgan from 'morgan'
 import express from 'express'
-import cors from 'cors'
 import bodyParser from 'body-parser'
+import cors from 'cors'
+import morgan from 'morgan'
 import bcrypt from 'bcrypt'
 import uuidV4 from 'uuid/v4'
 import Knex from 'knex'
@@ -23,7 +23,8 @@ const knex = Knex({
     max: 5
   }
 })
-const loginWhitelist = [ 'http://login.' + process.env.BASE_HOST ]
+const proto = process.env.BASE_HOST === 'merchant' ? 'http' : 'https'
+const loginWhitelist = [ proto + '://login.' + process.env.BASE_HOST ]
 const loginCorsOptions = (req, callback) => {
   let corsOptions
   if (loginWhitelist.indexOf(req.header('Origin')) !== -1) {
@@ -62,13 +63,12 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
           bcrypt.compare(req.body.password, data.password.toString('utf-8'), (error, result) => {
             if (result) {
               const uuid = uuidV4()
-              const proto = 'http' + (req.secure ? 's' : '')
               const issuer = proto + '://' + currentHost
               const audience = [proto + '://' + uiHost()]
 
               jwtSign(
                 {},
-                'MySecret',
+                'GGAuthSecret',
                 {
                   algorithm: 'HS512',
                   audience,

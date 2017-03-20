@@ -8,7 +8,7 @@ BIN_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 status="0"
 
-if [ "dev" = "${ENV}" ];
+if [ "development" = "${ENV}" ];
 then
     if [ ! -z "$(sudo docker ps -a --filter name=^/"${DB_DOCKER}"$ --filter status=running --format {{.ID}})" ];
     then

@@ -92,7 +92,7 @@ export default class LoginForm extends React.Component {
             })
 
             response.json().then(result => {
-              window.location = '//' + uiHost() + '?token=' + encodeURIComponent(result.token)
+              window.location = '//' + uiHost() + '/auth?token=' + encodeURIComponent(result.token)
             })
           } else {
             response.text().then(text => {

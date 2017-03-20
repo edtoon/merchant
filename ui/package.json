@@ -1,23 +1,31 @@
 {
   "scripts": {
-    "dev": "node server.js",
-    "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "dev": "babel-node server.js",
+    "start": "NODE_ENV=production babel-node server.js",
     "test": "standard"
   },
   "dependencies": {
     "body-parser": "^1.16.1",
     "classnames": "^2.2.5",
+    "cookie-parser": "^1.4.3",
     "express": "^4.14",
-    "express-session": "^1.15.1",
+    "gg-common": "file:/common",
     "isomorphic-fetch": "^2.2.1",
+    "jsonwebtoken": "^7.3.0",
+    "morgan": "^1.8.1",
+    "ms": "^1.0.0",
     "next": "^2.0.0-beta",
     "re-bulma": "^0.3.1",
     "react": "^15.4",
     "react-dom": "^15.4",
-    "standard": "^9.0.0"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "babel-preset-stage-0": "^6.22.0"
+    "babel-cli": "^6.24.0",
+    "babel-core": "^6.24.0",
+    "babel-preset-latest": "^6.24.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "babel-watch": "^2.0.6",
+    "standard": "^9.0.0"
   }
 }

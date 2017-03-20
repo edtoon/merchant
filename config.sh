@@ -18,7 +18,7 @@ then
     then
         ENV="production"
     else
-        ENV="dev"
+        ENV="development"
     fi
 fi
 
