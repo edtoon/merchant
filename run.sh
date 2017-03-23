@@ -8,7 +8,14 @@ BASE_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 . "${BASE_DIR}/config.sh"
 
-for module in api login ui www inkhero
+MODULES="api login ui"
+
+if [ "production" = "${ENV}" ];
+then
+    MODULES="${MODULES} www caddy"
+fi
+
+for module in ${MODULES}
 do
     echo "======================"
     echo "Running: ${module}"

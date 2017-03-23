@@ -8,11 +8,6 @@ BIN_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 . "${BIN_DIR}/../config.sh"
 
-if [ "production" = "${ENV}" ];
-then
-  exit 0
-fi
-
 if ! "${BIN_DIR}/check_mysql.sh";
 then
     sudo docker stop "${DB_DOCKER}" > /dev/null 2>&1 || true

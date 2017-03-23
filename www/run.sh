@@ -25,3 +25,5 @@ then
 
     [ "development" = "${ENV}" ] && hostile_alias "${WWW_DOCKER}" "${WWW_HOST}"
 fi
+
+true

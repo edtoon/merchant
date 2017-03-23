@@ -10,7 +10,14 @@ BASE_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 "${BASE_DIR}/bin/run_mysql.sh"
 
-for module in common api login ui www inkhero
+MODULES="common api login ui"
+
+if [ "production" = "${ENV}" ];
+then
+    MODULES="${MODULES} www caddy"
+fi
+
+for module in ${MODULES}
 do
     echo "======================"
     echo "Building: ${module}"

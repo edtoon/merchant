@@ -7,7 +7,7 @@ Current components are:
  * [api](api) - Provides registration/auth (JWT) endpoints as well as all data services,
    [https://api.merchant.gg/]
  * [common](common) - Code shared between components
- * [inkhero](inkhero) - Sample deployment configuration, [https://inkhero.merchant.gg/]
+ * [caddy](caddy) - Web server / reverse proxy configuration, e.g. [https://inkhero.merchant.gg/]
  * [login](login) - Unified login portal for web front-ends, [https://login.merchant.gg/]
  * [ui](ui) - The main web application, [https://app.merchant.gg/]
  * [www](www) - SaaS company web site, [https://merchant.gg/]

@@ -8,17 +8,12 @@ BIN_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 status="0"
 
-if [ "development" = "${ENV}" ];
+if [ ! -z "$(sudo docker ps -a --filter name=^/"${DB_DOCKER}"$ --filter status=running --format {{.ID}})" ];
 then
-    if [ ! -z "$(sudo docker ps -a --filter name=^/"${DB_DOCKER}"$ --filter status=running --format {{.ID}})" ];
-    then
-        sudo docker exec "${DB_DOCKER}" mysqladmin ping --silent
-        status="$?"
-    else
-        status="1"
-    fi
+    sudo docker exec "${DB_DOCKER}" mysqladmin ping --silent
+    status="$?"
 else
-    >&2 echo "Skipping ${DB_DOCKER}, ${APP_NAME} uses RDS in non-dev environments"
+    status="1"
 fi
 
 exit "${status}"

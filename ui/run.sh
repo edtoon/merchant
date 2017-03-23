@@ -37,3 +37,5 @@ then
 
     [ "development" = "${ENV}" ] && hostile_alias "${MODULE_DOCKER}" "${MODULE_HOST}"
 fi
+
+true
