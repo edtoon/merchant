@@ -4,7 +4,7 @@ import {
 } from 'react-native'
 
 const [screenWidth, screenHeight] = [Dimensions.get('window').width, Dimensions.get('window').height]
-const [dialogWidth, dialogHeight] = [Math.min(screenWidth, 300), Math.min(screenHeight / 3, 150)]
+const [dialogWidth, dialogHeight] = [Math.min(screenWidth, 300), Math.min(screenHeight / 3, 175)]
 
 const styles = StyleSheet.create({
   container: {
@@ -61,15 +61,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#FFF',
   },
+  loginErrorText: {
+    textAlign: 'center',
+    color: '#0FF',
+    marginBottom: 10,
+  },
   loginBottomContainer: {
     flexDirection: 'row',
     height: 40,
     alignItems: 'center',
     marginTop: 10,
   },
+  loginForgotText: {
+    color: '#0FF',
+  },
   loginButtonContainer: {
     flex: 1,
     alignItems: 'flex-end',
+    marginBottom: 10
   },
 })
 

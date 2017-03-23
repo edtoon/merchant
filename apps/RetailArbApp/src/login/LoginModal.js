@@ -24,12 +24,20 @@ class LoginModal extends React.Component {
     this.state = {
       username: null,
       password: null,
+      errorMessage: null,
     }
     this.logInput = this.logInput.bind(this)
   }
 
   logInput() {
-    console.log('Username: ' + this.state.username + ', Password: ' + this.state.password)
+    const match = (this.state.username === this.state.password)
+    console.log('Username: ' + this.state.username + ', Password: ' + this.state.password + ', Match: ' + match)
+
+    if (match) {
+      this.setState({ errorMessage: null })
+    } else {
+      this.setState({ errorMessage: 'username & password do not match' })
+    }
   }
 
   render() {
@@ -45,6 +53,10 @@ class LoginModal extends React.Component {
         <View style={styles.loginContainer}>
 
           <View style={styles.loginWrapper}>
+
+            {this.state.errorMessage !== null &&
+                <Text style={styles.loginErrorText}>{this.state.errorMessage}</Text>
+            }
 
             <View style={styles.loginInputContainer}>
               <View style={styles.loginIconWrapper}>
@@ -74,7 +86,7 @@ class LoginModal extends React.Component {
 
             <View style={styles.loginBottomContainer}>
               <TouchableOpacity onPress={() => {}}>
-                <Text>Forgot Password?</Text>
+                <Text style={styles.loginForgotText}>Forgot Password?</Text>
               </TouchableOpacity>
               <View style={styles.loginButtonContainer}>
                 <Button title='Login' onPress={this.logInput} />
