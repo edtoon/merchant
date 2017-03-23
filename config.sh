@@ -14,7 +14,7 @@ DATA_DIR="/mnt/gg/merchant/${APP_NAME}/data"
 
 if [ -z "${ENV}" ];
 then
-    if [ -f "/etc/ec2metadata" ];
+    if [ -f "/etc/ec2_version" ];
     then
         ENV="production"
     else
