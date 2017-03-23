@@ -23,6 +23,5 @@ then
     sudo docker run -d ${VOL_ARGS} --name "${WWW_DOCKER}" \
         nginx:alpine
 
-    CONTAINER_IP="$(sudo docker inspect --format "{{.NetworkSettings.IPAddress}}" "${WWW_DOCKER}")"
-    hostile_exec set "${CONTAINER_IP}" "${WWW_HOST}"
+    [ "development" = "${ENV}" ] && hostile_alias "${WWW_DOCKER}" "${WWW_HOST}"
 fi

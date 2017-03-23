@@ -35,6 +35,5 @@ then
         -e NODE_ENV="${NODE_ENV}" \
         merchantgg/node bash -c "npm rebuild && npm run ${NODE_ACTION}"
 
-    CONTAINER_IP="$(sudo docker inspect --format "{{.NetworkSettings.IPAddress}}" "${MODULE_DOCKER}")"
-    hostile_exec set "${CONTAINER_IP}" "${MODULE_HOST}"
+    [ "development" = "${ENV}" ] && hostile_alias "${MODULE_DOCKER}" "${MODULE_HOST}"
 fi

@@ -19,3 +19,10 @@ fi
 function hostile_exec {
   command_sudo_or_reg "${LIB_DIR}/../node_modules/.bin/hostile" $*
 }
+
+function hostile_alias {
+  local container_name="$1"
+  shift
+  local container_ip="$(sudo docker inspect --format "{{.NetworkSettings.IPAddress}}" "${container_name}")"
+  hostile_exec set "${container_ip}" $*
+}
