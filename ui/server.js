@@ -31,7 +31,7 @@ app.prepare().then(() => {
     let prop
     for (prop in req.cookies) {
       if (!req.cookies.hasOwnProperty(prop)) {
-        continue;
+        continue
       }
       res.clearCookie(prop)
     }
