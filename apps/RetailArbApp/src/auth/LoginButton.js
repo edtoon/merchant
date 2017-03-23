@@ -6,6 +6,8 @@ import {
   connect,
 } from 'react-redux'
 
+import * as AuthActions from './AuthActions'
+
 class LoginButton extends React.Component {
   render() {
     return (
@@ -20,5 +22,5 @@ class LoginButton extends React.Component {
 export default connect(state => ({
   count: state.counter.count,
 }), dispatch => ({
-  login: () => dispatch({ type: 'Login' }),
+  login: () => dispatch({ type: AuthActions.LOGIN }),
 }))(LoginButton)

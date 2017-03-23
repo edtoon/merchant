@@ -1,14 +1,9 @@
 import React from 'react'
 import {
-  Button,
-  Text,
   View,
 } from 'react-native'
-import {
-  NavigationActions,
-} from 'react-navigation'
 
-import LoginStatusMessage from './LoginStatusMessage'
+import LoginModal from '../login/LoginModal'
 import AuthButton from './AuthButton'
 import IncrementButton from './IncrementButton'
 import DecrementButton from './DecrementButton'
@@ -23,7 +18,7 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <LoginStatusMessage />
+        <LoginModal />
         <AuthButton />
         <CounterMessage />
         <IncrementButton />

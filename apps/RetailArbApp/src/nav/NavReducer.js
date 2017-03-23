@@ -3,6 +3,7 @@ import {
 } from 'react-navigation'
 
 import AppNavigator from '../AppNavigator'
+import * as AuthActions from '../auth/AuthActions'
 
 const initialNavState = {
   index: 1,
@@ -13,11 +14,11 @@ const initialNavState = {
 }
 
 export default (state = initialNavState, action) => {
-  if (action.type === 'Login') {
+  if (action.type === AuthActions.LOGIN) {
     return AppNavigator.router.getStateForAction(NavigationActions.back(), state)
   }
 
-  if (action.type === 'Logout') {
+  if (action.type === AuthActions.LOGOUT) {
     return AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'Login' }), state)
   }
 

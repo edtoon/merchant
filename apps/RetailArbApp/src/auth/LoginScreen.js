@@ -1,12 +1,8 @@
 import React from 'react'
 import {
-  Button,
   Text,
   View,
 } from 'react-native'
-import {
-  NavigationActions,
-} from 'react-navigation'
 
 import LoginButton from './LoginButton'
 import styles from '../styles'

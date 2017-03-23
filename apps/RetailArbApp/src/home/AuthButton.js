@@ -9,6 +9,8 @@ import {
   connect,
 } from 'react-redux'
 
+import * as AuthActions from '../auth/AuthActions'
+
 class AuthButton extends React.Component {
   render() {
     return (
@@ -23,6 +25,6 @@ class AuthButton extends React.Component {
 export default connect(state => ({
   isLoggedIn: state.auth.isLoggedIn,
 }), dispatch => ({
-  logout: () => dispatch({ type: 'Logout' }),
+  logout: () => dispatch({ type: AuthActions.LOGOUT }),
   login: () => dispatch(NavigationActions.navigate({ routeName: 'Login' })),
 }))(AuthButton)
