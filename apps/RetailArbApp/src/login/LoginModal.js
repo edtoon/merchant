@@ -41,7 +41,7 @@ class LoginModal extends React.Component {
   }
 
   render() {
-    if (this.props.jwt !== null) {
+    if (this.props.jwt === null) {
       return null;
     }
 
