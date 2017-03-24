@@ -1,7 +1,14 @@
 import React from 'react'
 import {
+  Button,
   View,
 } from 'react-native'
+import {
+  NavigationActions,
+} from 'react-navigation'
+import {
+  connect,
+} from 'react-redux'
 
 import LoginModal from '../login/LoginModal'
 import AuthButton from './AuthButton'
@@ -10,7 +17,7 @@ import DecrementButton from './DecrementButton'
 import CounterMessage from './CounterMessage'
 import styles from '../styles'
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Home Screen',
   }
@@ -19,6 +26,7 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <LoginModal />
+        <Button title="Profile" onPress={this.props.profile} />
         <AuthButton />
         <CounterMessage />
         <IncrementButton />
@@ -27,3 +35,7 @@ export default class HomeScreen extends React.Component {
     )
   }
 }
+
+export default connect(state => ({}), dispatch => ({
+  profile: () => dispatch(NavigationActions.navigate({ routeName: 'Profile' }))
+}))(HomeScreen)
