@@ -1,4 +1,10 @@
-import { call, put } from 'redux-saga/effects';
+import {
+  NavigationActions,
+} from 'react-navigation'
+import {
+  call,
+  put
+} from 'redux-saga/effects';
 
 import * as AuthActions from '../AuthActions'
 
@@ -39,4 +45,13 @@ export const reduceSucceedLogin = (state, action) => {
 
 export const reduceFailLogin = (state, action) => {
   return { ...state, jwt: null, authError: (action.message || 'Unknown error') }
+}
+
+export function* sagaLogout(action) {
+  yield put(NavigationActions.back())
+  yield put(AuthActions.logoutComplete())
+}
+
+export const reduceLogoutComplete = (state, action) => {
+  return { ...state, jwt: null, authError: null }
 }

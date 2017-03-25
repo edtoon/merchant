@@ -4,5 +4,6 @@ import * as LoginOperation from './operations/LoginOperation'
 import * as AuthActions from './AuthActions'
 
 export const AuthSagas = [
-  takeLatest(AuthActions.ATTEMPT, LoginOperation.sagaAttemptLogin)
+  takeLatest(AuthActions.ATTEMPT, LoginOperation.sagaAttemptLogin),
+  takeLatest(AuthActions.LOGOUT, LoginOperation.sagaLogout)
 ]

@@ -6,13 +6,13 @@ import {
 } from 'react-redux'
 
 import { HomeScreen } from './home/HomeScreen'
-import { ProfileScreen } from './profile/ProfileScreen'
+import { SettingsScreen } from './settings/SettingsScreen'
 
 export const AppNavigator = connect(state => ({
   nav: state.nav,})
 )(
   StackNavigator({
     Home: { screen: HomeScreen },
-    Profile: { screen: ProfileScreen },
+    Settings: { screen: SettingsScreen },
   })
 )

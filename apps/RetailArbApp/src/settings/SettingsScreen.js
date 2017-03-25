@@ -5,18 +5,17 @@ import {
 } from 'react-native'
 
 import { AppStyles } from '../AppStyles'
+import { LogoutButton } from '../auth/components/LogoutButton'
 
-export class ProfileScreen extends React.Component {
+export class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Profile',
+    title: 'Settings',
   }
 
   render() {
     return (
       <View style={AppStyles.container}>
-        <Text style={AppStyles.welcome}>
-          Profile Screen
-        </Text>
+        <LogoutButton />
       </View>
     )
   }

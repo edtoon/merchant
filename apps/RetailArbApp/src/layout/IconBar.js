@@ -1,42 +1,45 @@
 import React from 'react'
 import {
-  Dimensions,
-  StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import {
+  NavigationActions,
+} from 'react-navigation'
+import {
+  connect,
+} from 'react-redux'
 
-const iconBarTop = Dimensions.get('window').height - 150
+import { IconBarStyles } from './IconBarStyles'
 
-export class IconBar extends React.Component {
-  constructor(props) {
-    super(props)
+export const IconBar = connect(state => ({}), dispatch => ({
+  toSettings: () => dispatch(NavigationActions.navigate({ routeName: 'Settings' }))
+}))(
+  class _IconBar extends React.Component {
+    constructor(props) {
+      super(props)
+    }
+
+    handleDummy = () => {}
+
+    render() {
+      return (
+        <View style={IconBarStyles.iconBarContainer}>
+          <TouchableOpacity onPress={this.handleDummy}>
+            <Icon name='envelope-o' style={IconBarStyles.iconBarIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.handleDummy}>
+            <Icon name='video-camera' style={IconBarStyles.iconBarIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.handleDummy}>
+            <Icon name='film' style={IconBarStyles.iconBarIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.props.toSettings}>
+            <Icon name='gear' style={IconBarStyles.iconBarIcon} />
+          </TouchableOpacity>
+        </View>
+      )
+    }
   }
-
-  render() {
-    return (
-      <View style={IconBar.styles.iconBarContainer}>
-        <Icon name='envelope-o' style={IconBar.styles.iconBarIcon} />
-        <Icon name='video-camera' style={IconBar.styles.iconBarIcon} />
-        <Icon name='film' style={IconBar.styles.iconBarIcon} />
-        <Icon name='gear' style={IconBar.styles.iconBarIcon} />
-      </View>
-    )
-  }
-
-  static styles = StyleSheet.create({
-    iconBarContainer: {
-      position: 'absolute',
-      top: iconBarTop,
-      left: 50,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    iconBarIcon: {
-      fontSize: 40,
-      marginLeft: 20,
-      marginRight: 20,
-    },
-  })
-}
+)

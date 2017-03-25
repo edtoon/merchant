@@ -2,6 +2,7 @@ export const ATTEMPT = 'auth/ATTEMPT'
 export const SUCCEED = 'auth/SUCCEED'
 export const FAIL = 'auth/FAIL'
 export const LOGOUT = 'auth/LOGOUT'
+export const LOGOUT_COMPLETE = 'auth/LOGOUT_COMPLETE'
 
 export const attemptLogin = (username, password) => {
   return {
@@ -28,5 +29,11 @@ export const failLogin = (message) => {
 export const logout = () => {
   return {
     type: LOGOUT
+  }
+}
+
+export const logoutComplete = () => {
+  return {
+    type: LOGOUT_COMPLETE
   }
 }
