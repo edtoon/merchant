@@ -16,6 +16,12 @@ do
   then
     echo "Starting app: ${dir}"
     cd "${dir}"
+
+    for dir in $(ls -d ./node_modules/gg-*);
+    do
+      cp -rf $dir/dist/* $dir/
+    done
+
     react-native start --reset-cache
     exit 0
   fi
