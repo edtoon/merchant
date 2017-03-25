@@ -1,4 +1,4 @@
-import AppNavigator from './AppNavigator'
+import { AppNavigator } from './AppNavigator'
 
 const initialState = {
   index: 0,
@@ -7,7 +7,7 @@ const initialState = {
   ],
 }
 
-export default (state = initialState, action) => {
+export const AppNavReducer = (state = initialState, action) => {
   switch (action.type) {
     default:
       return AppNavigator.router.getStateForAction(action, state)

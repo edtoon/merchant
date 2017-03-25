@@ -6,19 +6,19 @@ import {
   connect,
 } from 'react-redux'
 
-import AppNavigator from './AppNavigator'
+import { AppNavigator } from './AppNavigator'
 
-class AppWithNavigationState extends React.Component {
-  render() {
-    return (
-      <AppNavigator navigation={addNavigationHelpers({
-        dispatch: this.props.dispatch,
-        state: this.props.nav,
-      })} />
-    )
-  }
-}
-
-export default connect(state => ({
+export const AppWithNavigationState = connect(state => ({
   nav: state.nav,
-}))(AppWithNavigationState)
+}))(
+  class _AppWithNavigationState extends React.Component {
+    render() {
+      return (
+        <AppNavigator navigation={addNavigationHelpers({
+          dispatch: this.props.dispatch,
+          state: this.props.nav,
+        })} />
+      )
+    }
+  }
+)

@@ -4,9 +4,9 @@ import {
   View,
 } from 'react-native'
 
-import AppStyles from '../AppStyles'
+import { AppStyles } from '../AppStyles'
 
-export default class ProfileScreen extends React.Component {
+export class ProfileScreen extends React.Component {
   static navigationOptions = {
     title: 'Profile',
   }

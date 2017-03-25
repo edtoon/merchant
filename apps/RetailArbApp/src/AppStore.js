@@ -6,10 +6,10 @@ import {
 import {
   autoRehydrate,
 } from 'redux-persist'
-import createSagaMiddleware from 'redux-saga'
+import sagaMiddlewareFactory from 'redux-saga'
 
-import AuthSagas from './auth/AuthSagas'
-import AppReducer from './AppReducer'
+import { AppReducer } from './AppReducer'
+import { AuthSagas } from './auth/AuthSagas'
 
 function* rootSaga() {
   yield [
@@ -17,9 +17,9 @@ function* rootSaga() {
   ]
 }
 
-const sagaMiddleware = createSagaMiddleware()
+const sagaMiddleware = sagaMiddlewareFactory()
 
-export default createStore(
+export const AppStore = createStore(
   AppReducer, undefined, compose(
     applyMiddleware(sagaMiddleware), autoRehydrate()
   )

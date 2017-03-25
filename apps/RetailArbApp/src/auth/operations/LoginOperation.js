@@ -34,9 +34,9 @@ export function* sagaAttemptLogin(action) {
 }
 
 export const reduceSucceedLogin = (state, action) => {
-  return { ...state, jwt: 'TODO: temporary token currently used' }
+  return { ...state, jwt: 'TODO: temporary token currently used', authError: null }
 }
 
 export const reduceFailLogin = (state, action) => {
-  return { ...state, authError: (action.message || 'Unknown error') }
+  return { ...state, jwt: null, authError: (action.message || 'Unknown error') }
 }

@@ -2,11 +2,11 @@ import {
   combineReducers,
 } from 'redux'
 
-import CounterReducer from './counter/CounterReducer'
-import AuthReducer from './auth/AuthReducer'
-import AppNavReducer from './AppNavReducer'
+import { AppNavReducer } from './AppNavReducer'
+import { AuthReducer } from './auth/AuthReducer'
+import { CounterReducer } from './counter/CounterReducer'
 
-export default combineReducers({
+export const AppReducer = combineReducers({
   auth: AuthReducer,
   counter: CounterReducer,
   nav: AppNavReducer,

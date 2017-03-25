@@ -5,14 +5,14 @@ import {
   connect,
 } from 'react-redux'
 
-import HomeScreen from './home/HomeScreen'
-import ProfileScreen from './profile/ProfileScreen'
+import { HomeScreen } from './home/HomeScreen'
+import { ProfileScreen } from './profile/ProfileScreen'
 
-const AppNavigator = StackNavigator({
-  Home: { screen: HomeScreen },
-  Profile: { screen: ProfileScreen },
-})
-
-export default connect(state => ({
+export const AppNavigator = connect(state => ({
   nav: state.nav,})
-)(AppNavigator)
+)(
+  StackNavigator({
+    Home: { screen: HomeScreen },
+    Profile: { screen: ProfileScreen },
+  })
+)

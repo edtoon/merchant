@@ -8,19 +8,19 @@ import {
 
 import * as CounterActions from '../CounterActions'
 
-class IncrementButton extends React.Component {
-  render() {
-    return (
-      <Button
-        title='Increment'
-        onPress={this.props.increment}
-      />
-    )
-  }
-}
-
-export default connect(state => ({
+export const IncrementButton = connect(state => ({
   count: state.counter.count,
 }), dispatch => ({
   increment: () => dispatch(CounterActions.increment()),
-}))(IncrementButton)
+}))(
+  class _IncrementButton extends React.Component {
+    render() {
+      return (
+        <Button
+          title='Increment'
+          onPress={this.props.increment}
+        />
+      )
+    }
+  }
+)

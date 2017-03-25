@@ -9,10 +9,10 @@ import {
   persistStore,
 } from 'redux-persist'
 
-import AppWithNavigationState from './AppWithNavigationState'
-import AppStore from './AppStore'
+import { AppStore } from './AppStore'
+import { AppWithNavigationState } from './AppWithNavigationState'
 
-export default class App extends React.Component {
+export class App extends React.Component {
   componentDidMount() {
     persistStore(AppStore, {
       blacklist: ['nav'],

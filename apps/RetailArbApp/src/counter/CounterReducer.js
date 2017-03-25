@@ -2,7 +2,7 @@ import * as CounterActions from './CounterActions'
 
 const initialState = { count: 0 }
 
-export default (state = initialState, action) => {
+export const CounterReducer = (state = initialState, action) => {
   switch (action.type) {
     case CounterActions.INCREMENT:
       return {...state, count: state.count + 1}

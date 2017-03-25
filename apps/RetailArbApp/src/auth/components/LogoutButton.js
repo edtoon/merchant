@@ -11,17 +11,17 @@ import {
 
 import * as AuthActions from '../AuthActions'
 
-class LogoutButton extends React.Component {
-  render() {
-    return (
-      <Button
-        title="Log Out"
-        onPress={this.props.logout}
-      />
-    )
-  }
-}
-
-export default connect(null, dispatch => ({
+export const LogoutButton = connect(null, dispatch => ({
   logout: () => dispatch(AuthActions.logout()),
-}))(LogoutButton)
+}))(
+  class _LogoutButton extends React.Component {
+    render() {
+      return (
+        <Button
+          title="Log Out"
+          onPress={this.props.logout}
+        />
+      )
+    }
+  }
+)
