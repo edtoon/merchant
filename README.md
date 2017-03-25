@@ -6,10 +6,9 @@ Current components are:
 
  * [api](api) - Provides registration/auth (JWT) endpoints as well as all data services,
    [https://api.merchant.gg/]
+ * [apps](apps) - React Native apps using the API
  * [common](common) - Code shared between components
  * [caddy](caddy) - Web server / reverse proxy configuration, e.g. [https://inkhero.merchant.gg/]
  * [login](login) - Unified login portal for web front-ends, [https://login.merchant.gg/]
  * [ui](ui) - The main web application, [https://app.merchant.gg/]
  * [www](www) - SaaS company web site, [https://merchant.gg/]
-
-The mobile app is in a separate repo - [https://www.github.com/edtoon/ShipApp/]
