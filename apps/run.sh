@@ -15,10 +15,11 @@ do
 
   if [[ -z "${APP}" || "${APP}" = "${dir}" ]];
   then
+    cd "${dir}"
+
     if [ -d "${AVD_DIR}" ];
     then
       echo "Running app with Android: ${dir}"
-      cd "${dir}"
 
       for dir in $(ls -d ./node_modules/gg-*);
       do
