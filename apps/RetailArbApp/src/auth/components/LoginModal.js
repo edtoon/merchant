@@ -70,6 +70,8 @@ class LoginModal extends React.Component {
     }
   }
 
+  handleDummy = () => {}
+
   render() {
     if (this.props.jwt !== null) {
       return null
@@ -82,7 +84,7 @@ class LoginModal extends React.Component {
     return (
       <Modal
         transparent={true}
-        onRequestClose={() => {}}
+        onRequestClose={this.handleDummy}
       >
         <View style={LoginModalStyles.loginContainer}>
 
@@ -119,7 +121,7 @@ class LoginModal extends React.Component {
             </View>
 
             <View style={LoginModalStyles.loginBottomContainer}>
-              <TouchableOpacity onPress={() => {}} disabled={disableActionsPendingResponse}>
+              <TouchableOpacity onPress={this.handleDummy} disabled={disableActionsPendingResponse}>
                 <Text style={LoginModalStyles.loginForgotText}>Forgot Password?</Text>
               </TouchableOpacity>
               <View style={LoginModalStyles.loginButtonContainer}>
