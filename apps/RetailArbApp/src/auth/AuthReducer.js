@@ -1,17 +1,16 @@
 import * as AuthActions from './AuthActions'
+import * as LoginOperation from './operations/LoginOperation'
 
 const initialState = { jwt: null, authError: null }
 
 export default (state = initialState, action) => {
   switch(action.type) {
+    case AuthActions.SUCCEED:
+      return LoginOperation.reduceSucceedLogin(state, action)
+    case AuthActions.FAIL:
+      return LoginOperation.reduceFailLogin(state, action)
     case AuthActions.LOGOUT:
-      return { ...state, jwt: null }
-    case AuthActions.LOGIN_REQUEST:
-      if (action.username && action.password && action.username === 'ed@gg.co') {
-        return { ...state, jwt: 'foo' }
-      } else {
-        return { ...state, authError: 'Invalid credentials' }
-      }
+      return { ...state, jwt: null, authError: null }
     default:
       return state
   }

@@ -44,22 +44,17 @@ class LoginModal extends React.Component {
       let errorSource = LoginModal.ERROR_SOURCE_LOCAL
 
       if (!validateEmail(username)) {
-        console.log('Email failed')
         errorMessage = 'Login invalid.'
       } else if (!validatePassword(password)) {
-        console.log('Password failed')
         errorMessage = 'Password invalid.'
       } else {
-        console.log('Setting error channel to API')
         errorSource = LoginModal.ERROR_SOURCE_API
       }
 
       this.setState({ username, password, errorMessage, errorSource })
 
       if (errorSource === LoginModal.ERROR_SOURCE_API) {
-        console.log('Requesting login for user: ' + username + ', password: ' + password)
-
-        this.props.requestLogin(username, password)
+        this.props.attemptLogin(username, password)
       }
     }
   }
@@ -203,5 +198,5 @@ export default connect(state => ({
   jwt: state.auth.jwt,
   errorMessage: state.auth.authError,
 }), dispatch => ({
-  requestLogin: (username, password) => dispatch(AuthActions.requestLogin(username, password)),
+  attemptLogin: (username, password) => dispatch(AuthActions.attemptLogin(username, password)),
 }))(LoginModal)

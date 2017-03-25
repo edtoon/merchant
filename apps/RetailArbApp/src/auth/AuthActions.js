@@ -1,13 +1,27 @@
-export const LOGIN_REQUEST = 'auth/LOGIN_REQUEST'
-export const LOGIN_SUCCESS = 'auth/LOGIN_SUCCESS'
-export const LOGIN_FAILURE = 'auth/LOGIN_FAILURE'
+export const ATTEMPT = 'auth/ATTEMPT'
+export const SUCCEED = 'auth/SUCCEED'
+export const FAIL = 'auth/FAIL'
 export const LOGOUT = 'auth/LOGOUT'
 
-export const requestLogin = (username, password) => {
+export const attemptLogin = (username, password) => {
   return {
-    type: LOGIN_REQUEST,
+    type: ATTEMPT,
     username,
     password,
+  }
+}
+
+export const succeedLogin = (token) => {
+  return {
+    type: SUCCEED,
+    token
+  }
+}
+
+export const failLogin = (message) => {
+  return {
+    type: FAIL,
+    message
   }
 }
 
