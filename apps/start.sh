@@ -16,7 +16,7 @@ do
   then
     echo "Starting app: ${dir}"
     cd "${dir}"
-    react-native start
+    react-native start --reset-cache
     exit 0
   fi
 done
