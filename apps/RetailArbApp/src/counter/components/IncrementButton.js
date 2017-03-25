@@ -6,14 +6,14 @@ import {
   connect,
 } from 'react-redux'
 
-import * as AuthActions from './AuthActions'
+import * as CounterActions from '../CounterActions'
 
-class LoginButton extends React.Component {
+class IncrementButton extends React.Component {
   render() {
     return (
       <Button
-        title='Login'
-        onPress={this.props.login}
+        title='Increment'
+        onPress={this.props.increment}
       />
     )
   }
@@ -22,5 +22,5 @@ class LoginButton extends React.Component {
 export default connect(state => ({
   count: state.counter.count,
 }), dispatch => ({
-  login: () => dispatch({ type: AuthActions.LOGIN }),
-}))(LoginButton)
+  increment: () => dispatch(CounterActions.increment()),
+}))(IncrementButton)

@@ -19,6 +19,12 @@ do
     then
       echo "Running app with Android: ${dir}"
       cd "${dir}"
+
+      for dir in $(ls -d ./node_modules/gg-*);
+      do
+        cp -rf $dir/dist/* $dir/
+      done
+
       react-native run-android
     else
       react-native run-ios

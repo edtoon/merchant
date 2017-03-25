@@ -4,7 +4,7 @@ import {
   View,
 } from 'react-native'
 
-import styles from '../styles'
+import AppStyles from '../AppStyles'
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
@@ -13,8 +13,8 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
+      <View style={AppStyles.container}>
+        <Text style={AppStyles.welcome}>
           Profile Screen
         </Text>
       </View>

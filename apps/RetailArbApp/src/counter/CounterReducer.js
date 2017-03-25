@@ -1,13 +1,14 @@
-const initialCounterState = { count: 0 }
+import * as CounterActions from './CounterActions'
 
-export default (state = initialCounterState, action) => {
-  if (action.type === 'Increment') {
-    return { ...state, count: state.count + 1 }
+const initialState = { count: 0 }
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case CounterActions.INCREMENT:
+      return {...state, count: state.count + 1}
+    case CounterActions.DECREMENT:
+      return {...state, count: state.count - 1}
+    default:
+      return state
   }
-
-  if (action.type === 'Decrement') {
-    return { ...state, count: state.count - 1 }
-  }
-
-  return state
 }

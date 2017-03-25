@@ -6,6 +6,8 @@ import {
   connect,
 } from 'react-redux'
 
+import * as CounterActions from '../CounterActions'
+
 class DecrementButton extends React.Component {
   render() {
     return (
@@ -20,5 +22,5 @@ class DecrementButton extends React.Component {
 export default connect(state => ({
   count: state.counter.count,
 }), dispatch => ({
-  decrement: () => dispatch({ type: 'Decrement' }),
+  decrement: () => dispatch(CounterActions.decrement()),
 }))(DecrementButton)

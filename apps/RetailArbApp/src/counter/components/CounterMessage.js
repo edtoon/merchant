@@ -7,13 +7,13 @@ import {
   connect,
 } from 'react-redux'
 
-import styles from '../styles'
+import AppStyles from '../../AppStyles'
 
 class CounterMessage extends React.Component {
   render() {
     return (
       <View>
-        <Text style={styles.welcome}>
+        <Text style={AppStyles.welcome}>
           The current count is: {this.props.count}
         </Text>
       </View>

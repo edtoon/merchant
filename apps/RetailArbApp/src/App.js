@@ -14,7 +14,10 @@ import AppStore from './AppStore'
 
 export default class App extends React.Component {
   componentDidMount() {
-    persistStore(AppStore, { storage: AsyncStorage })
+    persistStore(AppStore, {
+      blacklist: ['nav'],
+      storage: AsyncStorage,
+    })
   }
 
   render() {

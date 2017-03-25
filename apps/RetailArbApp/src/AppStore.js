@@ -7,6 +7,4 @@ import {
 
 import AppReducer from './AppReducer'
 
-const AppStore = createStore(AppReducer, undefined, autoRehydrate())
-
-export default AppStore
+export default createStore(AppReducer, undefined, autoRehydrate())

@@ -10,12 +10,12 @@ import {
   connect,
 } from 'react-redux'
 
-import LoginModal from '../login/LoginModal'
-import AuthButton from '../auth/AuthButton'
-import IncrementButton from '../counter/IncrementButton'
-import DecrementButton from '../counter/DecrementButton'
-import CounterMessage from '../counter/CounterMessage'
-import styles from '../styles'
+import LoginModal from '../auth/components/LoginModal'
+import LogoutButton from '../auth/components/LogoutButton'
+import IncrementButton from '../counter/components/IncrementButton'
+import DecrementButton from '../counter/components/DecrementButton'
+import CounterMessage from '../counter/components/CounterMessage'
+import AppStyles from '../AppStyles'
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -24,10 +24,10 @@ class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={AppStyles.container}>
         <LoginModal />
         <Button title="Profile" onPress={this.props.profile} />
-        <AuthButton />
+        <LogoutButton />
         <CounterMessage />
         <IncrementButton />
         <DecrementButton />
