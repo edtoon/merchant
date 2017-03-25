@@ -11,10 +11,10 @@ import {
 } from 'react-redux'
 
 import LoginModal from '../login/LoginModal'
-import AuthButton from './AuthButton'
-import IncrementButton from './IncrementButton'
-import DecrementButton from './DecrementButton'
-import CounterMessage from './CounterMessage'
+import AuthButton from '../auth/AuthButton'
+import IncrementButton from '../counter/IncrementButton'
+import DecrementButton from '../counter/DecrementButton'
+import CounterMessage from '../counter/CounterMessage'
 import styles from '../styles'
 
 class HomeScreen extends React.Component {

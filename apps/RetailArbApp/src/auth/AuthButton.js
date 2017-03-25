@@ -9,7 +9,7 @@ import {
   connect,
 } from 'react-redux'
 
-import * as AuthActions from '../auth/AuthActions'
+import * as AuthActions from './AuthActions'
 
 class AuthButton extends React.Component {
   render() {
