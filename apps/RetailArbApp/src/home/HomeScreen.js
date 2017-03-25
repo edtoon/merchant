@@ -13,6 +13,7 @@ import {
 import { AppStyles } from '../AppStyles'
 import { LoginModal } from '../auth/components/LoginModal'
 import { LogoutButton } from '../auth/components/LogoutButton'
+import { IconBar } from '../layout/IconBar'
 
 export const HomeScreen = connect(state => ({}), dispatch => ({
   profile: () => dispatch(NavigationActions.navigate({ routeName: 'Profile' }))
@@ -28,6 +29,7 @@ export const HomeScreen = connect(state => ({}), dispatch => ({
           <LoginModal />
           <Button title="Profile" onPress={this.props.profile} />
           <LogoutButton />
+          <IconBar />
         </View>
       )
     }
