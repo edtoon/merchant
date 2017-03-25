@@ -20,7 +20,7 @@ export const HomeScreen = connect(state => ({}), dispatch => ({
 }))(
   class _HomeScreen extends React.Component {
     static navigationOptions = {
-      title: 'Home Screen',
+      title: 'Home',
     }
 
     render() {
