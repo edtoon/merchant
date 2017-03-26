@@ -38,8 +38,10 @@
     </array>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Alerts for nearby deals will be broadcast to you and driving directions will be provided based on your current location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Your location will be sent to the server while the application is in the background so you may be continued to be alerted of nearby deals</string>
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSExceptionDomains</key>

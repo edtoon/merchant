@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Image,
+  Linking,
   Text,
   View,
 } from 'react-native'
@@ -16,7 +17,7 @@ const randomData = [
 ]
 
 const randomAlert = () => {
-  const randomNumber = Math.floor(Math.random() * (randomData.length - 1 + 1));
+  const randomNumber = Math.floor(Math.random() * (randomData.length - 1 + 1))
 
   return randomData[randomNumber]
 
@@ -30,12 +31,36 @@ export const AlertsRow = (props) => {
     rowStyles = [AlertsStyles.alertsSponsoredRow, ...rowStyles]
   }
 
+  const hasPosition = (props.latitude !== null && props.longitude !== null)
+  let mapLink = null
+
+  if (hasPosition) {
+    const geoUrl = (hasPosition ? ('geo:' + props.latitude + ',' + props.longitude) : null)
+    const goUrl = (url) => Linking.openURL(geoUrl)
+
+    mapLink = <Text style={{fontSize: 15, color: 'blue'}} onPress={goUrl}>Map</Text>
+  }
+
   return (
     <View style={rowStyles}>
       <Image source={{uri: props.picture.large}} style={AlertsStyles.alertsRowPhoto} />
       <Text style={AlertsStyles.alertsRowText}>
         {`${alert.title}\nCategory: ${alert.category}\nLocation: ${alert.location}`}
       </Text>
+      {mapLink}
     </View>
   )
+
+  /**
+   * TODO
+        const mapValue = await Linking.canOpenURL(geoUrl)
+          .then(supported => {
+            if (supported) {
+              const goUrl = (url) => Linking.openURL(geoUrl)
+            }
+          })
+          .catch((e) => {
+            console.log('Error in canOpenUrl', e)
+          })
+   */
 }
