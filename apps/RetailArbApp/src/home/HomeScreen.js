@@ -14,7 +14,7 @@ export class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={AppStyles.container}>
+      <View style={AppStyles.centeredContainer}>
         <LoginModal />
         <IconBar />
       </View>

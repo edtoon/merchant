@@ -14,7 +14,8 @@ import {
 import { IconBarStyles } from './IconBarStyles'
 
 export const IconBar = connect(state => ({}), dispatch => ({
-  toSettings: () => dispatch(NavigationActions.navigate({ routeName: 'Settings' }))
+  toAlerts: () => dispatch(NavigationActions.navigate({ routeName: 'Alerts' })),
+  toSettings: () => dispatch(NavigationActions.navigate({ routeName: 'Settings' })),
 }))(
   class _IconBar extends React.Component {
     constructor(props) {
@@ -26,7 +27,7 @@ export const IconBar = connect(state => ({}), dispatch => ({
     render() {
       return (
         <View style={IconBarStyles.iconBarContainer}>
-          <TouchableOpacity onPress={this.handleDummy}>
+          <TouchableOpacity onPress={this.props.toAlerts}>
             <Icon name='envelope-o' style={IconBarStyles.iconBarIcon} />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.handleDummy}>

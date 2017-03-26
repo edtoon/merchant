@@ -14,7 +14,7 @@ export class SettingsScreen extends React.Component {
 
   render() {
     return (
-      <View style={AppStyles.container}>
+      <View style={AppStyles.centeredContainer}>
         <LogoutButton />
       </View>
     )
