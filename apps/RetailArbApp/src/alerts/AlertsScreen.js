@@ -9,6 +9,7 @@ import { AlertsRow } from './AlertsRow'
 import { AlertsStyles } from './AlertsStyles'
 import { AppStyles } from '../AppStyles'
 import { IconBar } from '../layout/IconBar'
+import { CopyrightLine } from '../layout/CopyrightLine'
 
 export class AlertsScreen extends React.Component {
   static navigationOptions = {
@@ -49,6 +50,7 @@ export class AlertsScreen extends React.Component {
           renderSeparator={this.renderSeparator}
         />
         <IconBar />
+        <CopyrightLine />
       </View>
     )
   }

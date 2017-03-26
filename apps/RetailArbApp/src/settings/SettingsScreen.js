@@ -6,6 +6,7 @@ import {
 
 import { AppStyles } from '../AppStyles'
 import { LogoutButton } from '../auth/components/LogoutButton'
+import { CopyrightLine } from '../layout/CopyrightLine'
 
 export class SettingsScreen extends React.Component {
   static navigationOptions = {
@@ -16,6 +17,7 @@ export class SettingsScreen extends React.Component {
     return (
       <View style={AppStyles.centeredContainer}>
         <LogoutButton />
+        <CopyrightLine />
       </View>
     )
   }
