@@ -1,10 +1,14 @@
 import {
+  AsyncStorage,
+} from 'react-native'
+import {
   applyMiddleware,
   compose,
   createStore,
 } from 'redux'
 import {
   autoRehydrate,
+  persistStore,
 } from 'redux-persist'
 import sagaMiddlewareFactory from 'redux-saga'
 
@@ -23,8 +27,13 @@ const sagaMiddleware = sagaMiddlewareFactory()
 
 export const AppStore = createStore(
   AppReducer, undefined, compose(
-    applyMiddleware(sagaMiddleware), autoRehydrate()
+    autoRehydrate(), applyMiddleware(sagaMiddleware)
   )
 )
+
+persistStore(AppStore, {
+  blacklist: ['nav'],
+  storage: AsyncStorage,
+})
 
 sagaMiddleware.run(rootSaga)
