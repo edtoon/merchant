@@ -2,7 +2,10 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native'
-import { createAction, createReducer } from 'redux-act'
+import {
+  createAction,
+  createReducer
+} from 'redux-act'
 import {
   eventChannel,
 } from 'redux-saga'
