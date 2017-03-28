@@ -6,7 +6,7 @@ import {
   connect,
 } from 'react-redux'
 
-import { AppNavigator } from './AppNavigator'
+import AppNavigator from './navigation/NavigationProvider'
 
 @connect(
   state => ({
