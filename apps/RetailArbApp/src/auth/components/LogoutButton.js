@@ -9,10 +9,10 @@ import {
   connect,
 } from 'react-redux'
 
-import * as AuthActions from '../AuthActions'
+import * as AuthProvider from '../AuthProvider'
 
 export const LogoutButton = connect(null, dispatch => ({
-  logout: () => dispatch(AuthActions.logout()),
+  logout: () => dispatch(AuthProvider.logout()),
 }))(
   class _LogoutButton extends React.Component {
     render() {

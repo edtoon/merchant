@@ -3,11 +3,11 @@ import {
 } from 'redux'
 
 import { AppNavReducer } from './AppNavReducer'
-import { AuthReducer } from './auth/AuthReducer'
-import { LocationReducer } from './location/LocationProvider'
+import * as AuthProvider from './auth/AuthProvider'
+import * as LocationProvider from './location/LocationProvider'
 
 export const AppReducer = combineReducers({
-  auth: AuthReducer,
+  auth: AuthProvider.reducer,
   nav: AppNavReducer,
-  location: LocationReducer,
+  location: LocationProvider.reducer,
 })

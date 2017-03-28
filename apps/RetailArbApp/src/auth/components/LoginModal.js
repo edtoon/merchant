@@ -22,15 +22,15 @@ import {
   validatePassword,
 } from 'gg-common/utils/validators'
 
-import * as AuthActions from '../AuthActions'
+import * as AuthProvider from '../AuthProvider'
 import { LoginModalStyles } from './LoginModalStyles'
 import * as LocationProvider from '../../location/LocationProvider'
 
 export const LoginModal = connect(state => ({
   jwt: state.auth.jwt,
-  errorMessage: state.auth.authError,
+  errorMessage: state.auth.error,
 }), dispatch => ({
-  attemptLogin: (username, password) => dispatch(AuthActions.attemptLogin(username, password)),
+  attemptLogin: (username, password) => dispatch(AuthProvider.attemptLogin(username, password)),
   initializeLocation: () => dispatch(LocationProvider.initializeLocation()),
 }))(
   class _LoginModal extends React.Component {

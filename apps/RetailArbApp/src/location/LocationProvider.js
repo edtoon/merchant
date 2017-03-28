@@ -34,7 +34,7 @@ const initialState = {
 export const changePosition = createAction('location/changePosition', (time, latitude, longitude) => ({time, latitude, longitude}))
 export const initializeLocation = createAction('location/initializeLocation')
 
-export const LocationReducer = createReducer(
+export const reducer = createReducer(
   {
     [changePosition]: (state, {time, latitude, longitude}) => {
       if (valueUnlessUndef(time) === null || valueUnlessUndef(latitude) === null || valueUnlessUndef(longitude) === null ||
@@ -133,6 +133,6 @@ function* sagaWatchPosition() {
   }
 }
 
-export const LocationSagas = [
+export const sagas = [
   fork(sagaWatchPosition),
 ]

@@ -9,13 +9,13 @@ import {
 import sagaMiddlewareFactory from 'redux-saga'
 
 import { AppReducer } from './AppReducer'
-import { AuthSagas } from './auth/AuthSagas'
-import { LocationSagas } from './location/LocationProvider'
+import * as AuthProvider from './auth/AuthProvider'
+import * as LocationProvider from './location/LocationProvider'
 
 export function* rootSaga() {
   yield [
-    ...AuthSagas,
-    ...LocationSagas
+    ...[AuthProvider.sagas],
+    ...[LocationProvider.sagas]
   ]
 }
 
