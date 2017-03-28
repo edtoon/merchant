@@ -43,7 +43,7 @@ export const LocationReducer = createReducer(
       }
 
       return ({ ...state, time, latitude, longitude })
-    }
+    },
   },
   initialState
 )
