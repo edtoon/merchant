@@ -11,17 +11,19 @@ import {
 
 import * as AuthProvider from '../AuthProvider'
 
-export const LogoutButton = connect(null, dispatch => ({
-  logout: () => dispatch(AuthProvider.logout()),
-}))(
-  class _LogoutButton extends React.Component {
-    render() {
-      return (
-        <Button
-          title="Log Out"
-          onPress={this.props.logout}
-        />
-      )
-    }
-  }
+@connect(
+  state => ({}),
+  dispatch => ({
+    logout: () => dispatch(AuthProvider.logout()),
+  })
 )
+export class LogoutButton extends React.Component {
+  render() {
+    return (
+      <Button
+        title="Log Out"
+        onPress={this.props.logout}
+      />
+    )
+  }
+}

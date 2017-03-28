@@ -26,14 +26,17 @@ import * as AuthProvider from '../AuthProvider'
 import { LoginModalStyles } from './LoginModalStyles'
 import * as LocationProvider from '../../location/LocationProvider'
 
-export const LoginModal = connect(state => ({
-  jwt: state.auth.jwt,
-  errorMessage: state.auth.error,
-}), dispatch => ({
-  attemptLogin: (username, password) => dispatch(AuthProvider.attemptLogin(username, password)),
-  initializeLocation: () => dispatch(LocationProvider.initializeLocation()),
-}))(
-  class _LoginModal extends React.Component {
+@connect(
+  state => ({
+    jwt: state.auth.jwt,
+    errorMessage: state.auth.error,
+  }),
+  dispatch => ({
+    attemptLogin: (username, password) => dispatch(AuthProvider.attemptLogin(username, password)),
+    initializeLocation: () => dispatch(LocationProvider.initializeLocation()),
+  })
+)
+export class LoginModal extends React.Component {
     performedPostLoginInit = false
 
     constructor(props) {
@@ -162,4 +165,3 @@ export const LoginModal = connect(state => ({
       )
     }
   }
-)
