@@ -1,144 +1,135 @@
 import {
+  PermissionsAndroid,
   Platform,
 } from 'react-native'
+import { createAction, createReducer } from 'redux-act'
+import {
+  eventChannel,
+} from 'redux-saga'
 import {
   call,
   fork,
   put,
+  take,
 } from 'redux-saga/effects';
 
-const POSITION = 'location/POSITION'
+import {
+  unixTimestamp,
+  valueUnlessUndef,
+} from 'gg-common/utils/lang'
+
+const REQUIRE_PERMISSIONS_CHECK = (Platform.OS === 'android' && Platform.Version >= 23)
+const permissionChecks = {
+  High: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  Low: PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+}
 const initialState = {
-  position: null,
+  time: null,
   latitude: null,
   longitude: null,
-  time: null,
 }
-let locationPermissions = {
-  fine: true,
-  coarse: true,
-}
-let watchId = null
+export const changePosition = createAction('location/changePosition', (time, latitude, longitude) => ({time, latitude, longitude}))
 
-export const LocationReducer = (state = initialState, action) => {
-  console.log('In LocationReducer', action)
-  switch(action.type) {
-    case POSITION:
-      return {
-        ...state,
-        position: action.position,
-        latitude: action.latitude,
-        longitude: action.longitude,
-        time: action.time,
+export const initializeLocation = createAction('location/initializeLocation')
+export const LocationReducer = createReducer(
+  {
+    [changePosition]: (state, {time, latitude, longitude}) => {
+      if (valueUnlessUndef(time) === null || valueUnlessUndef(latitude) === null || valueUnlessUndef(longitude) === null ||
+        latitude === state.latitude || longitude === state.longitude) {
+        return state
       }
-    default:
-      return state
-  }
+
+      return ({ ...state, time, latitude, longitude })
+    }
+  },
+  initialState
+)
+
+const createPositionWatcher = (navigatorFunction, highAccuracy) => {
+  return eventChannel(emit => {
+    const watchId = navigatorFunction(
+      (position) => {
+        const time = unixTimestamp()
+
+        if (position && position.coords) {
+          emit({time, latitude: position.coords.latitude, longitude: position.coords.longitude})
+        }
+      },
+      (e) => {
+        console.log('positionWatcher.updatePosition emitting error', e)
+        emit({error: e})
+      },
+      {
+        enableHighAccuracy: highAccuracy,
+        timeout: 20000,
+      }
+    )
+
+    return () => {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId)
+      }
+    }
+  })
 }
 
-export const changePosition = (position, latitude, longitude, time) => {
-  console.log('In changePosition', position)
-  return {
-    type: POSITION,
-    position,
-    latitude,
-    longitude,
-    time,
+function* sagaWatchPosition() {
+  yield take([initializeLocation])
+
+  const permissionResults = {
+    High: !REQUIRE_PERMISSIONS_CHECK,
+    Low: !REQUIRE_PERMISSIONS_CHECK,
   }
-}
 
-const updatePosition = (position) => {
-  const time = (new Date().getTime() / 1000)
+  if (REQUIRE_PERMISSIONS_CHECK) {
+    for(const permissionDesc in permissionChecks) {
+      const permission = permissionChecks[permissionDesc]
+      const hasPermission = yield call(PermissionsAndroid.check, permission)
 
-  console.log('In updatePosition at time: ' + time, position)
+      if (hasPermission) {
+        permissionResults[permissionDesc] = true
+      } else {
+        const requestPermissionResult = yield call(
+          PermissionsAndroid.request,  permission,
+          {
+            title: `Retail Arbitrage ${permissionDesc}-Accuracy Location`,
+            message: 'The Retail Arbitrage app needs access to your location to ' +
+            'receive BOLO alerts in your vicinity and provide driving directions.'
+          }
+        )
 
-  if (!position || !position.coords) {
-    put(changePosition(null, null, null, time))
+        permissionResults[permissionDesc] = (requestPermissionResult === PermissionsAndroid.RESULTS_GRANTED)
+      }
+    }
+  }
+
+  if (!permissionResults.High && !permissionResults.Low) {
+    // TODO display to user somehow
+    console.log('Unable to obtain permissions for location information, certain features in the Retail Arbitrage app will be unavailable.')
   } else {
-    put(changePosition(
-      JSON.stringify(position),
-      position.coords.latitude, position.coords.longitude,
-      time
-    ))
-  }
-}
+    const currentChannel = yield call(createPositionWatcher, navigator.geolocation.getCurrentPosition, permissionResults.High)
+    const currentPayload = yield take(currentChannel)
+    const {error: currentError, time: currentTime, latitude: currentLatitude, longitude: currentLongitude} = currentPayload
 
-const getCurrentPosition = () => {
-  console.log('In getCurrentPosition', watchId)
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => updatePosition,
-    (e) => console.log(e),
-    {
-      enableHighAccuracy: false,
-      timeout: 20000,
-    }
-  )
-}
-
-const startPositionWatcher = () => {
-  console.log('In startPositionWatcher', watchId)
-
-  watchId = navigator.geolocation.watchPosition(
-    (position) => updatePosition,
-    (e) => console.log('Error in watchPosition', e)
-  )
-
-  console.log('startWatchPosition got watchId', watchId)
-}
-
-const cancelPositionWatcher = () => {
-  console.log('In cancelPositionWatcher', watchId)
-
-  navigator.geolocation.clearWatch(watchId)
-
-  watchId = null
-}
-
-function* sagaWatchPosition(action) {
-  if (Platform.OS === 'android' && Platform.version >= 23) {
-    const hasFine = yield call(PermissionsAndroid.check, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-
-    if (!hasFine) {
-      const requestFineResult = yield call(
-        PermissionsAndroid.request,  PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Retail Arbitrage High-Accuracy Location',
-          message: 'The Retail Arbitrage app needs access to your location to ' +
-          'receive BOLO alerts in your vicinity and provide driving directions.'
-        }
-      )
-
-      locationPermissions.fine = (requestFineResult === PermissionsAndroid.RESULTS_GRANTED)
+    if (!currentError) {
+      yield put(changePosition(currentTime, currentLatitude, currentLongitude))
     }
 
-    const hasCoarse = yield call(PermissionsAndroid.check, PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+    currentChannel.close()
 
-    if (!hasCoarse) {
-      const requestCoarseResult = yield call(
-        PermissionsAndroid.request, PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        {
-          title: 'Retail Arbitrage Coarse-Accuracy Location',
-          message: 'The Retail Arbitrage app needs access to your location to ' +
-          'receive BOLO alerts in your vicinity and provide driving directions.'
-        }
-      )
+    const watcherChannel = yield call(createPositionWatcher, navigator.geolocation.watchPosition, permissionResults.High)
 
-      locationPermissions.coarse = (requestCoarseResult === PermissionsAndroid.RESULTS_GRANTED)
+    while (true) {
+      const watcherPayload = yield take(watcherChannel)
+      const {error: watcherError, time: watcherTime, latitude: watcherLatitude, longitude: watcherLongitude} = watcherPayload
+
+      if (!watcherError) {
+        yield put(changePosition(watcherTime, watcherLatitude, watcherLongitude))
+      }
     }
-
-    // TODO
-    // alert('Unable to obtain permissions for location information, certain features in the Retail Arbitrage app will be unavailable.')
-  }
-
-  console.log('Resolved location permissions', locationPermissions)
-
-  if (locationPermissions.fine || locationPermissions.coarse) {
-    yield call(getCurrentPosition)
-    yield call(startPositionWatcher)
   }
 }
 
 export const LocationSagas = [
-  fork(sagaWatchPosition)
+  fork(sagaWatchPosition),
 ]
