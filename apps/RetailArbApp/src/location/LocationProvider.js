@@ -29,8 +29,8 @@ const initialState = {
   longitude: null,
 }
 export const changePosition = createAction('location/changePosition', (time, latitude, longitude) => ({time, latitude, longitude}))
-
 export const initializeLocation = createAction('location/initializeLocation')
+
 export const LocationReducer = createReducer(
   {
     [changePosition]: (state, {time, latitude, longitude}) => {
