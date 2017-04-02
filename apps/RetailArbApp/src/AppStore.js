@@ -4,6 +4,9 @@ import {
   createStore,
 } from 'redux'
 import {
+  createLogger
+} from 'redux-logger'
+import {
   autoRehydrate,
 } from 'redux-persist'
 import sagaMiddlewareFactory from 'redux-saga'
@@ -23,6 +26,6 @@ export const sagaMiddleware = sagaMiddlewareFactory()
 
 export const AppStore = createStore(
   AppReducer, undefined, compose(
-    autoRehydrate(), applyMiddleware(sagaMiddleware)
+    autoRehydrate(), applyMiddleware(sagaMiddleware, createLogger())
   )
 )
