@@ -38,10 +38,16 @@
     </array>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Alerts for nearby deals will be broadcast to you and driving directions will be provided based on your current location</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Your location will be sent to the server while the application is in the background so you may be continued to be alerted of nearby deals</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Alerts for nearby deals will be broadcast to you and driving directions will be provided based on your current location</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Your location will be sent to the server while the application is in the background so you may be continued to be alerted of nearby deals</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Your device&apos;s camera will be used to capture video of your shopping trip</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Videos recorded include sound captured from your device&apos;s microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Captured videos will be stored to your device&apos;s photo library</string>
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSExceptionDomains</key>

@@ -4,10 +4,10 @@ import {
 
 import * as NavigationProvider from './navigation/NavigationProvider'
 import * as AuthProvider from './auth/AuthProvider'
-import * as LocationProvider from './location/LocationProvider'
+import * as DeviceIntegrationProvider from './device/DeviceIntegrationProvider'
 
 export const AppReducer = combineReducers({
   auth: AuthProvider.reducer,
   nav: NavigationProvider.reducer,
-  location: LocationProvider.reducer,
+  location: DeviceIntegrationProvider.reducer,
 })

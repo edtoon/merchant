@@ -10,12 +10,12 @@ import sagaMiddlewareFactory from 'redux-saga'
 
 import { AppReducer } from './AppReducer'
 import * as AuthProvider from './auth/AuthProvider'
-import * as LocationProvider from './location/LocationProvider'
+import * as DeviceIntegrationProvider from './device/DeviceIntegrationProvider'
 
 export function* rootSaga() {
   yield [
-    ...[AuthProvider.sagas],
-    ...[LocationProvider.sagas]
+    ...AuthProvider.sagas,
+    ...DeviceIntegrationProvider.sagas
   ]
 }
 

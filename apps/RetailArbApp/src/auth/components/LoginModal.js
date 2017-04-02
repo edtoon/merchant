@@ -24,7 +24,7 @@ import {
 
 import * as AuthProvider from '../AuthProvider'
 import { LoginModalStyles } from './LoginModalStyles'
-import * as LocationProvider from '../../location/LocationProvider'
+import * as DeviceIntegrationProvider from '../../device/DeviceIntegrationProvider'
 
 @connect(
   state => ({
@@ -33,7 +33,7 @@ import * as LocationProvider from '../../location/LocationProvider'
   }),
   dispatch => ({
     attemptLogin: (username, password) => dispatch(AuthProvider.attemptLogin(username, password)),
-    initializeLocation: () => dispatch(LocationProvider.initializeLocation()),
+    initializeLocation: () => dispatch(DeviceIntegrationProvider.initializeLocation()),
   })
 )
 export class LoginModal extends React.Component {
