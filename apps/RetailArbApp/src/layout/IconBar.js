@@ -18,7 +18,15 @@ import { IconBarStyles } from './IconBarStyles'
     nav: state.nav
   }),
   dispatch => ({
-    execNavigate: (routeName) => dispatch(NavigationActions.navigate({ routeName })),
+    execNavigate: (routeName) => dispatch(
+      NavigationActions.reset({
+        index: 1,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Home' }),
+          NavigationActions.navigate({ routeName }),
+        ]
+      })
+    )
   })
 )
 export class IconBar extends React.Component {
