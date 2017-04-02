@@ -37,7 +37,7 @@ import * as DeviceIntegrationProvider from '../../device/DeviceIntegrationProvid
   })
 )
 export class LoginModal extends React.Component {
-    performedPostLoginInit = false
+    static performedPostLoginInit = false
 
     constructor(props) {
       super(props)
@@ -48,10 +48,6 @@ export class LoginModal extends React.Component {
         errorMessage: null,
         disableActions: false,
       }
-    }
-
-    postLoginInit() {
-      this.props.initializeLocation()
     }
 
     handleLogin = () => {
@@ -87,6 +83,11 @@ export class LoginModal extends React.Component {
           errorMessage: null,
           disableActions: false,
         })
+
+        if (!this.constructor.performedPostLoginInit) {
+          this.props.initializeLocation()
+          this.constructor.performedPostLoginInit = true
+        }
       } else if (newProps.errorMessage !== null) {
         this.setState({
           errorMessage: null,
@@ -99,11 +100,6 @@ export class LoginModal extends React.Component {
 
     render() {
       if (!this.state.disableActions && this.props.jwt !== null) {
-        if (!this.performedPostLoginInit) {
-          this.postLoginInit()
-          this.performedPostLoginInit = true;
-        }
-
         return null
       }
 
