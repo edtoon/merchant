@@ -14,10 +14,11 @@ import {
 import { IconBarStyles } from './IconBarStyles'
 
 @connect(
-  state => ({}),
+  state => ({
+    nav: state.nav
+  }),
   dispatch => ({
-    toAlerts: () => dispatch(NavigationActions.navigate({ routeName: 'Alerts' })),
-    toSettings: () => dispatch(NavigationActions.navigate({ routeName: 'Settings' })),
+    execNavigate: (routeName) => dispatch(NavigationActions.navigate({ routeName })),
   })
 )
 export class IconBar extends React.Component {
@@ -27,19 +28,37 @@ export class IconBar extends React.Component {
 
   handleDummy = () => {}
 
+  handleNavigate(routeName) {
+    return () => {
+      const {nav} = this.props
+      const currentRoute = nav.routes[nav.index].routeName
+
+      if (routeName !== currentRoute) {
+        this.props.execNavigate(routeName)
+      }
+    }
+  }
+
   render() {
+    const {nav} = this.props
+    const currentRoute = nav.routes[nav.index].routeName
+
     return (
       <View style={IconBarStyles.iconBarContainer}>
-        <TouchableOpacity onPress={this.props.toAlerts}>
+        {currentRoute === 'Alerts' ?
           <Icon name='envelope-o' style={IconBarStyles.iconBarIcon} />
-        </TouchableOpacity>
+          :
+          <TouchableOpacity onPress={this.handleNavigate('Alerts')}>
+            <Icon name='envelope-o' style={IconBarStyles.iconBarIcon} />
+          </TouchableOpacity>
+        }
         <TouchableOpacity onPress={this.handleDummy}>
           <Icon name='video-camera' style={IconBarStyles.iconBarIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={this.handleDummy}>
           <Icon name='film' style={IconBarStyles.iconBarIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={this.props.toSettings}>
+        <TouchableOpacity onPress={this.handleNavigate('Settings')}>
           <Icon name='gear' style={IconBarStyles.iconBarIcon} />
         </TouchableOpacity>
       </View>
