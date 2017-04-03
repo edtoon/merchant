@@ -1,13 +1,6 @@
 /* eslint-disable react/jsx-indent-props, indent */
 
 import React from 'react'
-import {
-  Box,
-  Button,
-  Input,
-  Label,
-  Notification
-} from 're-bulma'
 import fetch from 'isomorphic-fetch'
 import { apiHost, uiHost } from 'gg-common/utils/hosts'
 import { validateEmail, validatePassword } from 'gg-common/utils/validators'
@@ -24,7 +17,7 @@ export default class LoginForm extends React.Component {
       passwordErrorVisible: false,
       passwordErrorMessage: '',
       fetchErrorVisible: false,
-      fetchErrorMessage: ''
+      fetchErrorMessage: '',
     }
     this.handleEmailChange = this.handleEmailChange.bind(this)
     this.handlePasswordChange = this.handlePasswordChange.bind(this)
@@ -128,38 +121,41 @@ export default class LoginForm extends React.Component {
   }
 
   render () {
+    const emailIcon = (this.state.emailErrorVisible ? 'warning' : (this.state.email.length > 0 ? 'check' : null))
+    const emailControlClasses = 'control' + (emailIcon ? ' has-icon has-icon-right' : '')
+    const emailInputClasses = 'input' + (this.state.emailErrorVisible ? ' is-danger' : '')
+    const passwordIcon = (this.state.passwordErrorVisible ? 'warning' : (this.state.password.length > 0 ? 'check' : null))
+    const passwordControlClasses = 'control' + (passwordIcon ? ' has-icon has-icon-right' : '')
+    const passwordInputClasses = 'input' + (this.state.passwordErrorVisible ? ' is-danger' : '')
+
     return (
-      <Box>
+      <div className='box'>
         <form onSubmit={this.handleSubmit}>
-          <Notification color='isDanger' enableCloseButton
-                        style={{display: this.state.fetchErrorVisible ? 'block' : 'none', marginBottom: '8px'}}
-                        closeButtonProps={{onClick: e => this.handleCloseNotification(e)}}>
+          <div className='notification is-danger'
+               style={{display: this.state.fetchErrorVisible ? 'block' : 'none', marginBottom: '8px'}}>
             {this.state.fetchErrorMessage}
-          </Notification>
-          <Label>Email</Label>
-          <Input type='text' placeholder='user@example.org' onChange={this.handleEmailChange} hasIconRight
-                 icon={this.state.emailErrorVisible ? 'fa fa-warning' : (this.state.email.length > 0 ? 'fa fa-check' : null)}
-                 color={this.state.emailErrorVisible ? 'isDanger' : null}
-                 help={this.state.emailErrorVisible ? {
-                     color: 'isDanger',
-                     text: this.state.emailErrorMessage
-                   } : null}
-          />
-          <Label>Password</Label>
-          <Input type='password' placeholder='********' onChange={this.handlePasswordChange} hasIconRight
-                 icon={this.state.passwordErrorVisible ? 'fa fa-warning' : (this.state.password.length > 0 ? 'fa fa-check' : null)}
-                 color={this.state.passwordErrorVisible ? 'isDanger' : null}
-                 help={this.state.passwordErrorVisible ? {
-                     color: 'isDanger',
-                     text: this.state.passwordErrorMessage
-                   } : null}
-          />
+            <button className='delete' onClick={this.handleCloseNotification} />
+          </div>
+          <label className='label'>Email</label>
+          <p className={emailControlClasses}>
+            <input className={emailInputClasses} type='text' placeholder='user@example.org'
+                   onChange={this.handleEmailChange} />
+            {emailIcon ? <i className='fa fa-{emailIcon}' /> : ''}
+            {this.state.emailErrorVisible ? <span className='help is-danger'>{this.state.emailErrorMessage}</span> : ''}
+          </p>
+          <label className='label'>Password</label>
+          <p className={passwordControlClasses}>
+            <input className={passwordInputClasses} type='password' placeholder='********'
+                   onChange={this.handlePasswordChange} />
+            {passwordIcon ? <i className='fa fa-{passwordIcon}' /> : ''}
+            {this.state.passwordErrorVisible ? <span className='help is-danger'>{this.state.passwordErrorMessage}</span> : ''}
+          </p>
           <hr />
           <p className='control'>
-            <Button color='isPrimary'>Login</Button>
+            <button className='button is-primary'>Login</button>
           </p>
         </form>
-      </Box>
+      </div>
     )
   }
 }

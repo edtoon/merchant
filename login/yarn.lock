@@ -1894,7 +1894,7 @@ getpass@^0.1.1:
     assert-plus "^1.0.0"
 
 "gg-common@file:/common":
-  version "0.0.0"
+  version "0.0.3"
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -2125,10 +2125,6 @@ inquirer@^0.12.0:
     string-width "^1.0.1"
     strip-ansi "^3.0.0"
     through "^2.3.6"
-
-insert-css@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/insert-css/-/insert-css-0.2.0.tgz#d15789971662d9899c28977fb6220d5381d2451a"
 
 interpret@^1.0.0:
   version "1.0.1"
@@ -3074,12 +3070,6 @@ rc@^1.1.7:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
-
-re-bulma@^0.3.1:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/re-bulma/-/re-bulma-0.3.2.tgz#5c9e876b22a3a53625a972d1ffb7ddfdb292ec7a"
-  dependencies:
-    insert-css "^0.2.0"
 
 react-deep-force-update@^2.0.1:
   version "2.0.1"

@@ -1,12 +1,6 @@
 /* eslint-disable react/jsx-indent-props, indent */
 
 import React from 'react'
-import {
-  Box,
-  Button,
-  Input,
-  Label
-} from 're-bulma'
 import fetch from 'isomorphic-fetch'
 import { apiHost } from 'gg-common/utils/hosts'
 import { validateEmail, validatePassword } from 'gg-common/utils/validators'
@@ -24,12 +18,15 @@ export default class RegisterForm extends React.Component {
       passwordErrorMessage: '',
       confirmPassword: '',
       confirmPasswordErrorVisible: false,
-      confirmPasswordErrorMessage: ''
+      confirmPasswordErrorMessage: '',
+      fetchErrorVisible: false,
+      fetchErrorMessage: '',
     }
     this.handleEmailChange = this.handleEmailChange.bind(this)
     this.handlePasswordChange = this.handlePasswordChange.bind(this)
     this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleCloseNotification = this.handleCloseNotification.bind(this)
   }
 
   handleEmailChange (e) {
@@ -88,6 +85,8 @@ export default class RegisterForm extends React.Component {
     e.preventDefault()
 
     if (this.validateForm()) {
+      console.log('Attempting registration: ' + this.state.email)
+
       fetch('//' + apiHost() + '/register', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -99,14 +98,39 @@ export default class RegisterForm extends React.Component {
         .then(response => {
           console.log('Response status: ' + response.status)
 
-          if (response.status === 200) {
+          if (response.ok) {
+            this.setState({
+              fetchErrorVisible: false,
+              fetchErrorMessage: ''
+            })
+
             window.location = '/'
+          } else {
+            response.text().then(text => {
+              this.setState({
+                fetchErrorVisible: true,
+                fetchErrorMessage: text
+              })
+            })
           }
         })
         .catch(error => {
           console.log('Registration failed: ', error)
+          this.setState({
+            fetchErrorVisible: true,
+            fetchErrorMessage: error
+          })
         })
     }
+  }
+
+  handleCloseNotification (e) {
+    e.preventDefault()
+
+    this.setState({
+      fetchErrorVisible: false,
+      fetchErrorMessage: 'Closed'
+    })
   }
 
   validateForm () {
@@ -116,44 +140,52 @@ export default class RegisterForm extends React.Component {
   }
 
   render () {
+    const emailIcon = (this.state.emailErrorVisible ? 'warning' : (this.state.email.length > 0 ? 'check' : null))
+    const emailControlClasses = 'control' + (emailIcon ? ' has-icon has-icon-right' : '')
+    const emailInputClasses = 'input' + (this.state.emailErrorVisible ? ' is-danger' : '')
+    const passwordIcon = (this.state.passwordErrorVisible ? 'warning' : (this.state.password.length > 0 ? 'check' : null))
+    const passwordControlClasses = 'control' + (passwordIcon ? ' has-icon has-icon-right' : '')
+    const passwordInputClasses = 'input' + (this.state.passwordErrorVisible ? ' is-danger' : '')
+    const confirmPasswordIcon = (this.state.confirmPasswordErrorVisible ? 'warning' : (this.state.confirmPassword.length > 0 ? 'check' : null))
+    const confirmPasswordControlClasses = 'control' + (confirmPasswordIcon ? ' has-icon has-icon-right' : '')
+    const confirmPasswordInputClasses = 'input' + (this.state.confirmPasswordErrorVisible ? ' is-danger' : '')
+
     return (
-      <Box>
+      <div className='box'>
         <form onSubmit={this.handleSubmit}>
-          <Label>Email</Label>
-          <Input type='text' placeholder='user@example.org' onChange={this.handleEmailChange} hasIconRight
-                 icon={this.state.emailErrorVisible ? 'fa fa-warning' : (this.state.email.length > 0 ? 'fa fa-check' : null)}
-                 color={this.state.emailErrorVisible ? 'isDanger' : null}
-                 help={this.state.emailErrorVisible ? {
-                     color: 'isDanger',
-                     text: this.state.emailErrorMessage
-                   } : null}
-          />
+          <div className='notification is-danger'
+               style={{display: this.state.fetchErrorVisible ? 'block' : 'none', marginBottom: '8px'}}>
+            {this.state.fetchErrorMessage}
+            <button className='delete' onClick={this.handleCloseNotification} />
+          </div>
+          <label className='label'>Email</label>
+          <p className={emailControlClasses}>
+            <input className={emailInputClasses} type='text' placeholder='user@example.org'
+                   onChange={this.handleEmailChange} />
+            {emailIcon ? <i className='fa fa-{emailIcon}' /> : ''}
+            {this.state.emailErrorVisible ? <span className='help is-danger'>{this.state.emailErrorMessage}</span> : ''}
+          </p>
           <hr />
-          <Label>Password</Label>
-          <Input type='password' placeholder='********' onChange={this.handlePasswordChange} hasIconRight
-                 icon={this.state.passwordErrorVisible ? 'fa fa-warning' : (this.state.password.length > 0 ? 'fa fa-check' : null)}
-                 color={this.state.passwordErrorVisible ? 'isDanger' : null}
-                 help={this.state.passwordErrorVisible ? {
-                     color: 'isDanger',
-                     text: this.state.passwordErrorMessage
-                   } : null}
-          />
-          <Label>Confirm Password</Label>
-          <Input type='password' placeholder='********' onChange={this.handleConfirmPasswordChange}
-                 hasIconRight
-                 icon={this.state.confirmPasswordErrorVisible ? 'fa fa-warning' : (this.state.confirmPassword.length > 0 ? 'fa fa-check' : null)}
-                 color={this.state.confirmPasswordErrorVisible ? 'isDanger' : null}
-                 help={this.state.confirmPasswordErrorVisible ? {
-                     color: 'isDanger',
-                     text: this.state.confirmPasswordErrorMessage
-                   } : null}
-          />
+          <label className='label'>Password</label>
+          <p className={passwordControlClasses}>
+            <input className={passwordInputClasses} type='password' placeholder='********'
+                   onChange={this.handlePasswordChange} />
+            {passwordIcon ? <i className='fa fa-{passwordIcon}' /> : ''}
+            {this.state.passwordErrorVisible ? <span className='help is-danger'>{this.state.passwordErrorMessage}</span> : ''}
+          </p>
+          <label className='label'>Confirm Password</label>
+          <p className={confirmPasswordControlClasses}>
+            <input className={confirmPasswordInputClasses} type='password' placeholder='********'
+                   onChange={this.handleConfirmPasswordChange} />
+            {confirmPasswordIcon ? <i className='fa fa-{confirmPasswordIcon}' /> : ''}
+            {this.state.confirmPasswordErrorVisible ? <span className='help is-danger'>{this.state.confirmPasswordErrorMessage}</span> : ''}
+          </p>
           <hr />
           <p className='control'>
-            <Button color='isPrimary'>Register</Button>
+            <button className='button is-primary'>Register</button>
           </p>
         </form>
-      </Box>
+      </div>
     )
   }
 }
