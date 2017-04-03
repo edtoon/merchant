@@ -1,6 +1,6 @@
 {
   "name": "gg-common",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf ./dist && NODE_ENV=production babel --copy-files ./src --out-dir dist",
