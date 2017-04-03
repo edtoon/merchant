@@ -17,7 +17,7 @@ export default class LoginForm extends React.Component {
       passwordErrorVisible: false,
       passwordErrorMessage: '',
       fetchErrorVisible: false,
-      fetchErrorMessage: '',
+      fetchErrorMessage: ''
     }
     this.handleEmailChange = this.handleEmailChange.bind(this)
     this.handlePasswordChange = this.handlePasswordChange.bind(this)

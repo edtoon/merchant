@@ -20,7 +20,7 @@ export default class RegisterForm extends React.Component {
       confirmPasswordErrorVisible: false,
       confirmPasswordErrorMessage: '',
       fetchErrorVisible: false,
-      fetchErrorMessage: '',
+      fetchErrorMessage: ''
     }
     this.handleEmailChange = this.handleEmailChange.bind(this)
     this.handlePasswordChange = this.handlePasswordChange.bind(this)
