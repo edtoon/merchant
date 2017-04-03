@@ -6,6 +6,7 @@ import {
 } from 'react-redux'
 
 import { AlertsScreen } from '../alerts/AlertsScreen'
+import { CaptureScreen } from '../capture/CaptureScreen'
 import { HomeScreen } from '../home/HomeScreen'
 import { SettingsScreen } from '../settings/SettingsScreen'
 
@@ -16,6 +17,7 @@ const navigation = connect(
 )(
   StackNavigator({
     Alerts: { screen: AlertsScreen },
+    Capture: { screen: CaptureScreen },
     Home: { screen: HomeScreen },
     Settings: { screen: SettingsScreen },
   })

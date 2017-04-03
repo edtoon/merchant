@@ -60,7 +60,7 @@ export class IconBar extends React.Component {
             <Icon name='envelope-o' style={IconBarStyles.iconBarIcon} />
           </TouchableOpacity>
         }
-        <TouchableOpacity onPress={this.handleDummy}>
+        <TouchableOpacity onPress={this.handleNavigate('Capture')}>
           <Icon name='video-camera' style={IconBarStyles.iconBarIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={this.handleDummy}>

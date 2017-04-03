@@ -14,11 +14,13 @@ import sagaMiddlewareFactory from 'redux-saga'
 import { AppReducer } from './AppReducer'
 import * as AuthProvider from './auth/AuthProvider'
 import * as DeviceIntegrationProvider from './device/DeviceIntegrationProvider'
+import * as LibraryProvider from './library/LibraryProvider'
 
 export function* rootSaga() {
   yield [
     ...AuthProvider.sagas,
-    ...DeviceIntegrationProvider.sagas
+    ...DeviceIntegrationProvider.sagas,
+    ...LibraryProvider.sagas,
   ]
 }
 
