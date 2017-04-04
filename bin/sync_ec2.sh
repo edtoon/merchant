@@ -15,5 +15,6 @@ TARGET_DIR="${TARGET_DIR:=/mnt/gg/merchant/${APP_NAME}/src/current}"
 sudo chown -R "${USER}" "${SRC_DIR}"
 ssh "${SITE}" -- sudo chown -R ubuntu:ubuntu "${TARGET_DIR}"
 rsync -Pav -e 'ssh -C' \
-  --exclude 'apps' --exclude 'dist' --exclude 'node_modules' --exclude 'yarn.lock' --exclude '.next' \
+  --exclude 'apps' --exclude 'dist' --exclude 'node_modules' --exclude '.next' \
+  --exclude 'yarn.lock' --exclude 'npm-debug.log' \
   "${SRC_DIR}/" "${SITE}:${TARGET_DIR}"
