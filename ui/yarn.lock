@@ -3370,9 +3370,9 @@ rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-re-bulma@^0.3.1:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/re-bulma/-/re-bulma-0.3.2.tgz#5c9e876b22a3a53625a972d1ffb7ddfdb292ec7a"
+re-bulma@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/re-bulma/-/re-bulma-0.3.3.tgz#fa80c7a217d2900b6cf54081b0c094250cd5b510"
   dependencies:
     insert-css "^0.2.0"
 
