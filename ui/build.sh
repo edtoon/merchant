@@ -16,4 +16,5 @@ sudo docker run -it --rm ${VOL_ARGS} merchantgg/node yarn add --force file:/comm
 sudo docker run -it --rm ${VOL_ARGS} merchantgg/node yarn install
 sudo bash -c 'for dir in $(ls -d '${MODULE_DIR}'/node_modules/gg-*); do cp -rf $dir/dist/* $dir/; done'
 sudo rm -rf "${MODULE_DIR}/node_modules/re-bulma/src"
+sudo docker run -it --rm ${VOL_ARGS} merchantgg/node npm run build
 sudo docker run -it --rm ${VOL_ARGS} merchantgg/node npm run test

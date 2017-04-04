@@ -1,4 +1,4 @@
-import { sign as jwtSign } from 'jsonwebtoken'
+import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import bcrypt from 'bcrypt'
 import uuidV4 from 'uuid/v4'
 import Knex from 'knex'
+import validateUuid from 'uuid-validate'
 
 import { currentHost, uiHost } from 'gg-common/utils/hosts'
 
@@ -43,6 +44,70 @@ server.use(bodyParser.urlencoded({
 }))
 server.use(morgan('combined'))
 
+server.options('/claim', cors(loginCorsOptions))
+server.post('/claim', cors(loginCorsOptions), (req, res) => {
+  if (!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+    console.log('Missing authorization in headers', req.headers)
+    res.status(400)
+    res.send('Missing authentication')
+  } else {
+    const jwt = req.headers.authorization.substr(7)
+    const isMobile = (req.headers['user-agent'] && req.headers['user-agent'].startsWith('GG-Native-App/'))
+    const secret = (isMobile ? 'GGAuthSecret' : 'GGUiSecret')
+
+    jwtVerify(jwt, secret, (err, decoded) => {
+      let uuid = null
+
+      if (!err && decoded.aud && decoded.aud.length > 0 && decoded.sub && decoded.sub === ('' + parseInt(decoded.sub, 10)) && decoded.iss && decoded.jti && validateUuid(decoded.jti, 4)) {
+        if (isMobile) {
+          if (decoded.aud.indexOf('native') === 0 && decoded.iss === (proto + '://' + currentHost)) {
+            uuid = decoded.jti
+          }
+        } else if (decoded.aud.indexOf(proto + '://' + currentHost) > -1 && decoded.iss === (proto + '://' + uiHost()) && decoded.tk && validateUuid(decoded.tk, 4)) {
+          uuid = decoded.tk
+        }
+      }
+
+      if (!uuid) {
+        res.status(400)
+        res.send('Invalid token')
+      } else {
+        knex.select(['id']).from('auth_ticket').where({
+          'user_id': decoded.sub,
+          uuid: knex.raw('UNHEX(REPLACE("' + uuid + '","-",""))')
+        })
+          .then(rows => {
+            if (!rows || rows.length !== 1) {
+              res.status(400)
+              res.send('No ticket found')
+            } else {
+              let data = rows[0]
+
+              knex('auth_ticket_claim').insert({
+                auth_ticket_id: data.id,
+                claimed_at: knex.raw('UNIX_TIMESTAMP()')
+              })
+                .then(() => {
+                  res.status(200)
+                  res.send('OK')
+                })
+                .catch(error => {
+                  console.log('Insert error: ', error)
+                  res.status(400)
+                  res.send('Failed to claim authentication ticket')
+                })
+            }
+          })
+          .catch(error => {
+            console.log('Query error: ', error)
+            res.status(400)
+            res.send('Error occurred')
+          })
+      }
+    })
+  }
+})
+
 server.options('/login', cors(loginCorsOptions))
 server.post('/login', cors(loginCorsOptions), (req, res) => {
   if (!req.body.username) {
@@ -64,7 +129,8 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
             if (result) {
               const uuid = uuidV4()
               const issuer = proto + '://' + currentHost
-              const audience = [proto + '://' + uiHost()]
+              const isMobile = (req.headers && req.headers['user-agent'] && req.headers['user-agent'].startsWith('GG-Native-App/'))
+              const audience = [isMobile ? 'native' : (proto + '://' + uiHost())]
 
               jwtSign(
                 {},
@@ -75,7 +141,7 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
                   issuer,
                   jwtid: uuid,
                   subject: '' + data.id,
-                  expiresIn: '30s'
+                  expiresIn: (isMobile ? '7d' : '30s')
                 },
                 (error, token) => {
                   if (error) {
@@ -113,7 +179,7 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
       .catch(error => {
         console.log('Query error: ', error)
         res.status(400)
-        res.send('Error occured')
+        res.send('Error occurred')
       })
   }
 })
@@ -158,7 +224,7 @@ server.post('/register', cors(loginCorsOptions), (req, res) => {
       .catch(error => {
         console.log('Query error: ', error)
         res.status(400)
-        res.send('Error occured')
+        res.send('Error occurred')
       })
   }
 })

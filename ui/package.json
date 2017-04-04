@@ -1,6 +1,7 @@
 {
   "scripts": {
     "dev": "babel-node server.js",
+    "build": "next build",
     "start": "NODE_ENV=production babel-node server.js",
     "test": "standard"
   },
@@ -14,7 +15,7 @@
     "jsonwebtoken": "^7.3.0",
     "morgan": "^1.8.1",
     "ms": "^1.0.0",
-    "next": "^2.0.0-beta",
+    "next": "^2.0.1",
     "re-bulma": "^0.3.3",
     "react": "^15.4",
     "react-dom": "^15.4",

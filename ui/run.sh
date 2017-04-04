@@ -7,6 +7,7 @@ while [ -h "${SOURCE}" ]; do SOURCE="$(readlink "${SOURCE}")"; done
 MODULE_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 
 . "${MODULE_DIR}/../config.sh"
+. "${MODULE_DIR}/../lib/lib-docker.sh"
 . "${MODULE_DIR}/../lib/lib-hostile.sh"
 
 "${MODULE_DIR}/../bin/run_mysql.sh"
@@ -30,9 +31,22 @@ then
 
     HTTP_ARGS="-e BASE_HOST=${BASE_HOST} -e HOST=${MODULE_HOST}"
     VOL_ARGS="-w /app -v ${MODULE_DIR}:/app -v ${MODULE_DIR}/../common:/common:ro"
+    ADD_HOSTS=""
+
+    if [ "production" != "${NODE_ENV}" ];
+    then
+        api_ip="$(docker_ip ${APP_NAME}_api)"
+
+        if [ -z "${api_ip}" ];
+        then
+          >&2 echo "ERROR - no running api container"
+        else
+            ADD_HOSTS=" --add-host ${API_HOST}:${api_ip}"
+        fi
+    fi
 
     sudo docker run -d ${VOL_ARGS} ${HTTP_ARGS} --name "${MODULE_DOCKER}" \
-        -e NODE_ENV="${NODE_ENV}" \
+        ${ADD_HOSTS} -e NODE_ENV="${NODE_ENV}" \
         merchantgg/node bash -c "npm rebuild && npm run ${NODE_ACTION}"
 
     [ "development" = "${ENV}" ] && hostile_alias "${MODULE_DOCKER}" "${MODULE_HOST}"

@@ -11,6 +11,8 @@ import {
   takeLatest,
 } from 'redux-saga/effects';
 
+import { API_URL, USER_AGENT } from '../utils'
+
 export const attemptLogin = createAction('auth/attemptLogin', (username, password) => ({username, password}))
 export const failLogin = createAction('auth/failLogin', (message) => ({message}))
 export const succeedLogin = createAction('auth/succeedLogin', (token) => ({token}))
@@ -25,8 +27,7 @@ export const reducer = createReducer(
       return { ...state, jwt: null, error: (message || 'Unknown error') }
     },
     [succeedLogin]: (state, {token}) => {
-      // TODO fix temporary token issues
-      return { ...state, jwt: 'TODO: temporary token currently used', error: null }
+      return { ...state, jwt: token, error: null }
     },
     [logoutComplete]: (state) => {
       return { ...state, jwt: null, error: null }
@@ -36,9 +37,12 @@ export const reducer = createReducer(
 )
 
 const fetchAttemptLogin = async (username, password) => {
-  return fetch('https://api.merchant.gg/login', {
+  return fetch(API_URL + '/login', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': USER_AGENT
+    },
     body: JSON.stringify({
       username: username,
       password: password,
@@ -56,11 +60,29 @@ const fetchAttemptLogin = async (username, password) => {
     .then(json => json.token)
 }
 
+const fetchClaimLogin = async (token) => {
+  return fetch(API_URL + '/claim', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'User-Agent': USER_AGENT
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        let error = new Error(response.statusText)
+        error.response = response
+        throw error
+      }
+    })
+}
+
 export function* sagaAttemptLogin(action) {
   const {username, password} = action.payload
 
   try {
     const token = yield call(fetchAttemptLogin, username, password)
+    yield call(fetchClaimLogin, token)
     yield put(succeedLogin(token))
   } catch(e) {
     console.log('Failed login', e)

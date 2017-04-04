@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import ms from 'ms'
 import next from 'next'
 import uuidV4 from 'uuid/v4'
+import fetch from 'isomorphic-fetch'
 
 import { apiHost, currentHost, loginHost } from 'gg-common/utils/hosts'
 
@@ -60,7 +61,7 @@ app.prepare().then(() => {
       console.log('Verifying auth token')
 
       jwtVerify(req.query.token, 'GGAuthSecret', (err, decoded) => {
-        if (!err && decoded.sub && decoded.sub === ('' + parseInt(decoded.sub, 10)) && decoded.aud && decoded.aud.indexOf(proto + '://' + currentHost) > -1) {
+        if (!err && decoded.sub && decoded.sub === ('' + parseInt(decoded.sub, 10)) && decoded.aud && decoded.aud.length > 0 && decoded.aud.indexOf(proto + '://' + currentHost) > -1) {
           const uuid = uuidV4()
           const issuer = proto + '://' + currentHost
           const audience = [proto + '://' + apiHost()]
@@ -68,7 +69,9 @@ app.prepare().then(() => {
           console.log('Valid auth token, signing UI token')
 
           jwtSign(
-            {},
+            {
+              tk: decoded.jti
+            },
             'GGUiSecret',
             {
               algorithm: 'HS512',
@@ -84,20 +87,40 @@ app.prepare().then(() => {
                 res.status(400)
                 res.send('Failed to generate access token')
               } else {
-                console.log('JWT: ', token)
-                res.writeHead(302, {
-                  'Cache-Control': 'no-cache, no-store, must-revalidate',
-                  Pragma: 'no-cache',
-                  Expires: 0,
-                  'Set-Cookie':
-                    'jwt=' + encodeURIComponent(token) + '; ' +
-                    'Domain=.' + req.headers.host + '; ' +
-                    (proto === 'https' ? 'Secure; ' : '') +
-                    'Expires=' + (new Date(Date.now() + JWT_COOKIE_LENGTH)).toUTCString() + '; ' +
-                    'Version=1',
-                  Location: '/'
+                fetch(proto + '://' + apiHost() + '/claim', {
+                  method: 'POST',
+                  headers: {
+                    Authorization: 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                  },
+                  credentials: 'include'
                 })
-                res.end()
+                  .then(fetchResponse => {
+                    if (fetchResponse.ok) {
+                      res.writeHead(302, {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        Pragma: 'no-cache',
+                        Expires: 0,
+                        'Set-Cookie':
+                        'jwt=' + encodeURIComponent(token) + '; ' +
+                        'Domain=.' + req.headers.host + '; ' +
+                        (proto === 'https' ? 'Secure; ' : '') +
+                        'Expires=' + (new Date(Date.now() + JWT_COOKIE_LENGTH)).toUTCString() + '; ' +
+                        'Version=1',
+                        Location: '/'
+                      })
+                      res.end()
+                    } else {
+                      fetchResponse.text().then(text => {
+                        console.log('Redirecting to login after bad response from claim: ', text)
+                        res.redirect(proto + '://' + loginHost())
+                      })
+                    }
+                  })
+                  .catch(error => {
+                    console.log('Redirecting to login after error fetching claim: ', error)
+                    res.redirect(proto + '://' + loginHost())
+                  })
               }
             }
           )

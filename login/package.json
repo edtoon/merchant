@@ -8,7 +8,7 @@
   "dependencies": {
     "gg-common": "file:/common",
     "isomorphic-fetch": "^2.2.1",
-    "next": "^2.0.0-beta",
+    "next": "^2.0.1",
     "react": "^15.4",
     "react-dom": "^15.4",
     "react-youtube": "^7.3.0"
