@@ -30,7 +30,7 @@ then
     then
         BASE_HOST="merchant.gg"
     else
-        BASE_HOST="merchant"
+        BASE_HOST="merchant.local"
     fi
 fi
 

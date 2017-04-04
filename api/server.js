@@ -23,7 +23,7 @@ const knex = Knex({
     max: 5
   }
 })
-const proto = process.env.BASE_HOST === 'merchant' ? 'http' : 'https'
+const proto = process.env.BASE_HOST.endsWith('.local') ? 'http' : 'https'
 const loginWhitelist = [ proto + '://login.' + process.env.BASE_HOST ]
 const loginCorsOptions = (req, callback) => {
   let corsOptions
@@ -89,7 +89,6 @@ server.post('/login', cors(loginCorsOptions), (req, res) => {
                       created_at: knex.raw('UNIX_TIMESTAMP()')
                     })
                       .then(() => {
-                        console.log('JWT: ', token)
                         res.json({token})
                       })
                       .catch(error => {
