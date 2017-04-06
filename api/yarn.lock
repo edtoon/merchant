@@ -1622,7 +1622,7 @@ getpass@^0.1.1:
     assert-plus "^1.0.0"
 
 "gg-common@file:/common":
-  version "0.0.3"
+  version "0.0.4"
 
 glob-base@^0.3.0:
   version "0.3.0"
