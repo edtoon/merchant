@@ -9,6 +9,7 @@ import Knex from 'knex'
 import validateUuid from 'uuid-validate'
 
 import { currentHost, uiHost } from 'gg-common/utils/hosts'
+import { randomInt } from 'gg-common/utils/lang'
 
 const knex = Knex({
   client: 'mysql',
@@ -44,8 +45,7 @@ server.use(bodyParser.urlencoded({
 }))
 server.use(morgan('combined'))
 
-server.options('/claim', cors(loginCorsOptions))
-server.post('/claim', cors(loginCorsOptions), (req, res) => {
+const jwtAuthenticatedRequest = (req, res, onSuccess) => {
   if (!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
     console.log('Missing authorization in headers', req.headers)
     res.status(400)
@@ -55,16 +55,16 @@ server.post('/claim', cors(loginCorsOptions), (req, res) => {
     const isMobile = (req.headers['user-agent'] && req.headers['user-agent'].startsWith('GG-Native-App/'))
     const secret = (isMobile ? 'GGAuthSecret' : 'GGUiSecret')
 
-    jwtVerify(jwt, secret, (err, decoded) => {
+    jwtVerify(jwt, secret, (jwtError, decodedJwt) => {
       let uuid = null
 
-      if (!err && decoded.aud && decoded.aud.length > 0 && decoded.sub && decoded.sub === ('' + parseInt(decoded.sub, 10)) && decoded.iss && decoded.jti && validateUuid(decoded.jti, 4)) {
+      if (!jwtError && decodedJwt.aud && decodedJwt.aud.length > 0 && decodedJwt.sub && decodedJwt.sub === ('' + parseInt(decodedJwt.sub, 10)) && decodedJwt.iss && decodedJwt.jti && validateUuid(decodedJwt.jti, 4)) {
         if (isMobile) {
-          if (decoded.aud.indexOf('native') === 0 && decoded.iss === (proto + '://' + currentHost)) {
-            uuid = decoded.jti
+          if (decodedJwt.aud.indexOf('native') === 0 && decodedJwt.iss === (proto + '://' + currentHost)) {
+            uuid = decodedJwt.jti
           }
-        } else if (decoded.aud.indexOf(proto + '://' + currentHost) > -1 && decoded.iss === (proto + '://' + uiHost()) && decoded.tk && validateUuid(decoded.tk, 4)) {
-          uuid = decoded.tk
+        } else if (decodedJwt.aud.indexOf(proto + '://' + currentHost) > -1 && decodedJwt.iss === (proto + '://' + uiHost()) && decodedJwt.tk && validateUuid(decodedJwt.tk, 4)) {
+          uuid = decodedJwt.tk
         }
       }
 
@@ -72,40 +72,68 @@ server.post('/claim', cors(loginCorsOptions), (req, res) => {
         res.status(400)
         res.send('Invalid token')
       } else {
-        knex.select(['id']).from('auth_ticket').where({
-          'user_id': decoded.sub,
-          uuid: knex.raw('UNHEX(REPLACE("' + uuid + '","-",""))')
-        })
-          .then(rows => {
-            if (!rows || rows.length !== 1) {
-              res.status(400)
-              res.send('No ticket found')
-            } else {
-              let data = rows[0]
-
-              knex('auth_ticket_claim').insert({
-                auth_ticket_id: data.id,
-                claimed_at: knex.raw('UNIX_TIMESTAMP()')
-              })
-                .then(() => {
-                  res.status(200)
-                  res.send('OK')
-                })
-                .catch(error => {
-                  console.log('Insert error: ', error)
-                  res.status(400)
-                  res.send('Failed to claim authentication ticket')
-                })
-            }
-          })
-          .catch(error => {
-            console.log('Query error: ', error)
-            res.status(400)
-            res.send('Error occurred')
-          })
+        onSuccess(decodedJwt, uuid)
       }
     })
   }
+}
+
+const mockAlerts = [
+  { title: '$40+ Profit Per Ladies Shirts', category: 'BOLO', location: 'Ross In-Store' },
+  { title: '75% Off Store-Wide', category: 'Sale', location: 'Goodwill Outlet' },
+  { title: '45% Off Fragrances, $80+ Profit', category: 'Clearance', location: 'Armani Exchange' },
+  { title: 'Blue Light Special: DVDs', category: 'Sale', location: 'K-Mart' },
+  { title: '3rd-Party Ink 40% Off', category: 'Sponsored', location: 'InkHero.com' }
+]
+
+server.get('/alerts', (req, res) => {
+  jwtAuthenticatedRequest(req, res, (decodedJwt) => {
+    let alertCount = randomInt(3, 24)
+    let alerts = []
+
+    for (let i = 0; i < alertCount; i++) {
+      alerts[i] = mockAlerts[randomInt(0, mockAlerts.length - 1)]
+    }
+
+    res.json({alerts})
+  })
+})
+
+server.options('/claim', cors(loginCorsOptions))
+server.post('/claim', cors(loginCorsOptions), (req, res) => {
+  jwtAuthenticatedRequest(req, res, (decodedJwt, uuid) => {
+    knex.select(['id']).from('auth_ticket').where({
+      'user_id': decodedJwt.sub,
+      uuid: knex.raw('UNHEX(REPLACE("' + uuid + '","-",""))')
+    })
+      .then(rows => {
+        if (!rows || rows.length !== 1) {
+          res.status(400)
+          res.send('No ticket found')
+        } else {
+          let data = rows[0]
+
+          knex('auth_ticket_claim').insert({
+            auth_ticket_id: data.id,
+            claimed_at: knex.raw('UNIX_TIMESTAMP()')
+          })
+            .then(() => {
+              res.status(200)
+              res.send('OK')
+            })
+            .catch(error => {
+              console.log('Insert error: ', error)
+              res.status(400)
+              res.send('Failed to claim authentication ticket')
+            })
+        }
+      })
+      .catch(error => {
+        console.log('Query error: ', error)
+        res.status(400)
+        res.send('Error occurred')
+      })
+  })
 })
 
 server.options('/login', cors(loginCorsOptions))
