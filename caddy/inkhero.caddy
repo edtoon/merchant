@@ -9,4 +9,5 @@ inkhero.merchant.gg {
     filenames_form NFC
     silent_auth_errors
   }
+  mime .apk application/vnd.android.package-archive
 }
