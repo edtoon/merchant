@@ -92,7 +92,18 @@ server.get('/alerts', (req, res) => {
     let alerts = []
 
     for (let i = 0; i < alertCount; i++) {
-      alerts[i] = mockAlerts[randomInt(0, mockAlerts.length - 1)]
+      const alert = mockAlerts[randomInt(0, mockAlerts.length - 1)]
+
+      if (alert.location !== 'InkHero.com') {
+        alert.destination = {
+          latitude: 37.4843428,
+          longitude: -122.14839939999999,
+          title: 'Facebook HQ',
+          description: '1 Hacker Way, Menlo Park, CA 94025'
+        }
+      }
+
+      alerts[i] = alert
     }
 
     res.json({alerts})
