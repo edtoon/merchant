@@ -9,7 +9,7 @@ import Knex from 'knex'
 import validateUuid from 'uuid-validate'
 
 import { currentHost, uiHost } from 'gg-common/utils/hosts'
-import { randomInt } from 'gg-common/utils/lang'
+import { randomInt, unixTimestamp } from 'gg-common/utils/lang'
 
 const knex = Knex({
   client: 'mysql',
@@ -85,14 +85,20 @@ const mockAlerts = [
   { title: 'Blue Light Special: DVDs', category: 'Sale', location: 'K-Mart' },
   { title: '3rd-Party Ink 40% Off', category: 'Sponsored', location: 'InkHero.com' }
 ]
+const fortyEightHours = (60 * 60 * 24 * 2)
 
 server.get('/alerts', (req, res) => {
   jwtAuthenticatedRequest(req, res, (decodedJwt) => {
+    const currentTime = unixTimestamp()
     let alertCount = randomInt(3, 24)
     let alerts = []
 
     for (let i = 0; i < alertCount; i++) {
-      const alert = mockAlerts[randomInt(0, mockAlerts.length - 1)]
+      const alert = {
+        ...mockAlerts[randomInt(0, mockAlerts.length - 1)]
+      }
+
+      alert.timestamp = randomInt((currentTime - fortyEightHours), currentTime)
 
       if (alert.location !== 'InkHero.com') {
         alert.destination = {
@@ -105,6 +111,10 @@ server.get('/alerts', (req, res) => {
 
       alerts[i] = alert
     }
+
+    alerts.sort((a, b) => {
+      return b.timestamp - a.timestamp
+    })
 
     res.json({alerts})
   })
