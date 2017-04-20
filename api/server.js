@@ -88,36 +88,34 @@ const mockAlerts = [
 const fortyEightHours = (60 * 60 * 24 * 2)
 
 server.get('/alerts', (req, res) => {
-  jwtAuthenticatedRequest(req, res, (decodedJwt) => {
-    const currentTime = unixTimestamp()
-    let alertCount = randomInt(3, 24)
-    let alerts = []
+  const currentTime = unixTimestamp()
+  let alertCount = randomInt(3, 24)
+  let alerts = []
 
-    for (let i = 0; i < alertCount; i++) {
-      const alert = {
-        ...mockAlerts[randomInt(0, mockAlerts.length - 1)]
-      }
-
-      alert.timestamp = randomInt((currentTime - fortyEightHours), currentTime)
-
-      if (alert.location !== 'InkHero.com') {
-        alert.destination = {
-          latitude: 37.4843428,
-          longitude: -122.14839939999999,
-          title: 'Facebook HQ',
-          description: '1 Hacker Way, Menlo Park, CA 94025'
-        }
-      }
-
-      alerts[i] = alert
+  for (let i = 0; i < alertCount; i++) {
+    const alert = {
+      ...mockAlerts[randomInt(0, mockAlerts.length - 1)]
     }
 
-    alerts.sort((a, b) => {
-      return b.timestamp - a.timestamp
-    })
+    alert.timestamp = randomInt((currentTime - fortyEightHours), currentTime)
 
-    res.json({alerts})
+    if (alert.location !== 'InkHero.com') {
+      alert.destination = {
+        latitude: 37.4843428,
+        longitude: -122.14839939999999,
+        title: 'Facebook HQ',
+        description: '1 Hacker Way, Menlo Park, CA 94025'
+      }
+    }
+
+    alerts[i] = alert
+  }
+
+  alerts.sort((a, b) => {
+    return b.timestamp - a.timestamp
   })
+
+  res.json({alerts})
 })
 
 server.options('/claim', cors(loginCorsOptions))
