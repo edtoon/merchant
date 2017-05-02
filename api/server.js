@@ -7,10 +7,19 @@ import bcrypt from 'bcrypt'
 import uuidV4 from 'uuid/v4'
 import Knex from 'knex'
 import validateUuid from 'uuid-validate'
+import google from 'googleapis'
+import * as util from 'util'
+import dotenv from 'dotenv'
 
 import { currentHost, uiHost } from 'gg-common/utils/hosts'
 import { randomInt, unixTimestamp } from 'gg-common/utils/lang'
 
+dotenv.config({ silent: true })
+
+const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_SECRET = process.env.CLIENT_SECRET
+const REDIRECT_URI = process.env.REDIRECT_URI
+const googleAuth = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 const knex = Knex({
   client: 'mysql',
   connection: {
@@ -26,6 +35,16 @@ const knex = Knex({
   }
 })
 const proto = process.env.BASE_HOST.endsWith('.local') ? 'http' : 'https'
+const appWhitelist = [ proto + '://app.' + process.env.BASE_HOST ]
+const appCorsOptions = (req, callback) => {
+  let corsOptions
+  if (appWhitelist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true, credentials: true }
+  } else {
+    corsOptions = { origin: false }
+  }
+  callback(null, corsOptions)
+}
 const loginWhitelist = [ proto + '://login.' + process.env.BASE_HOST ]
 const loginCorsOptions = (req, callback) => {
   let corsOptions
@@ -118,11 +137,218 @@ server.get('/alerts', (req, res) => {
   res.json({alerts})
 })
 
+server.post('/youtube/announce', (req, res) => {
+  if (!req.body.email || !req.body.videoId || !req.body.playlistId) {
+    res.status(400)
+    res.send('Bad Request')
+  } else {
+    console.log('VideoId', req.body.videoId)
+    console.log('PlaylistId', req.body.playlistId)
+    console.log('Email', req.body.email)
+
+    knex.select(['id']).from('user').where({
+      name: req.body.email
+    })
+      .then(userRows => {
+        if (!userRows || userRows.length !== 1) {
+          res.status(400)
+          res.send('No user found')
+        } else {
+          const userData = userRows[0]
+
+          knex.select(['refresh_token', 'access_token', 'expiry_date']).from('youtube_credential').where({
+            user_id: userData.id
+          })
+            .then(youtubeCredentialRows => {
+              if (!youtubeCredentialRows || youtubeCredentialRows.length !== 1) {
+                res.status(400)
+                res.send('No credentials found')
+              } else {
+                const youtubeCredentialData = youtubeCredentialRows[0]
+                const youtubeAuth = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+
+                youtubeAuth.setCredentials({
+                  token_type: 'Bearer',
+                  refresh_token: youtubeCredentialData.refresh_token,
+                  access_token: youtubeCredentialData.access_token,
+                  expiry_date: youtubeCredentialData.expiry_date
+                })
+
+                const youtube = google.youtube({
+                  version: 'v3',
+                  auth: youtubeAuth
+                })
+                const options = {
+                  part: 'snippet',
+                  resource: {
+                    snippet: {
+                      playlistId: req.body.playlistId,
+                      resourceId: {
+                        kind: 'youtube#video',
+                        videoId: req.body.videoId
+                      }
+                    }
+                  }
+                }
+
+                console.log('Inserting options', options)
+
+                const respond = (playlistInsertData, playlistInsertError) => {
+                  if (playlistInsertError) {
+                    res.status(400)
+                    res.send('Error occurred')
+                  } else {
+                    res.status(200)
+                    res.send(playlistInsertData.refresh_token)
+                  }
+                }
+
+                youtube.playlistItems.insert(
+                  options,
+                  function (playlistInsertError, playlistInsertData, playlistInsertResponse) {
+                    if (playlistInsertResponse) {
+                      console.log('Playlist item insertion status code', playlistInsertResponse.statusCode)
+                    }
+
+                    if (playlistInsertData) {
+                      console.log('Playlist item insertion data', util.inspect(playlistInsertData, false, null))
+                    }
+
+                    if (playlistInsertError) {
+                      console.log('Error inserting playlist item', playlistInsertError)
+                    }
+
+                    if (youtubeAuth.credentials && youtubeAuth.credentials.access_token && youtubeAuth.credentials.expiry_date && (
+                        youtubeAuth.credentials.access_token !== youtubeCredentialData.access_token ||
+                        youtubeAuth.credentials.expiry_date !== youtubeCredentialData.expiry_date
+                      )) {
+                      console.log('Updating credentials', youtubeAuth.credentials)
+                      knex('youtube_credential').where('user_id', userData.id).update({
+                        access_token: youtubeAuth.credentials.access_token,
+                        expiry_date: youtubeAuth.credentials.expiry_date
+                      })
+                        .then(() => {
+                          respond(playlistInsertData, playlistInsertError)
+                        })
+                        .catch(error => {
+                          console.log('Query error: ', error)
+                          res.status(400)
+                          res.send('Error occurred')
+                        })
+                    } else {
+                      respond(playlistInsertData, playlistInsertError)
+                    }
+                  }
+                )
+              }
+            })
+            .catch(error => {
+              console.log('Query error: ', error)
+              res.status(400)
+              res.send('Error occurred')
+            })
+        }
+      })
+      .catch(error => {
+        console.log('Query error: ', error)
+        res.status(400)
+        res.send('Error occurred')
+      })
+  }
+})
+
+server.options('/youtube/token', cors(appCorsOptions))
+server.get('/youtube/token', cors(appCorsOptions), (req, res) => {
+  jwtAuthenticatedRequest(req, res, (decodedJwt, uuid) => {
+    knex.select(['refresh_token']).from('youtube_credential').where({
+      user_id: decodedJwt.sub
+    })
+      .then(rows => {
+        if (!rows || rows.length !== 1) {
+          res.status(400)
+          res.send('No token found')
+        } else {
+          let data = rows[0]
+
+          res.status(200)
+          res.send(data.refresh_token)
+        }
+      })
+      .catch(error => {
+        console.log('Query error: ', error)
+        res.status(400)
+        res.send('Error occurred')
+      })
+  })
+})
+
+server.options('/youtube/auth', cors(appCorsOptions))
+server.post('/youtube/auth', cors(appCorsOptions), (req, res) => {
+  jwtAuthenticatedRequest(req, res, (decodedJwt, uuid) => {
+    if (!req.body.code) {
+      res.status(400)
+      res.send('No authorization code provided')
+    } else {
+      googleAuth.getToken(req.body.code, (err, tokens) => {
+        if (err) {
+          console.log('Error processing token', err)
+          res.status(400)
+          res.send('Error processing authorization')
+        } else {
+          let fields = {
+            user_id: decodedJwt.sub,
+            access_token: tokens.access_token,
+            expiry_date: tokens.expiry_date
+          }
+
+          if (tokens.refresh_token) {
+            fields.refresh_token = tokens.refresh_token
+          }
+
+          const insert = knex('youtube_credential').insert(fields).toString() +
+            ' ON DUPLICATE KEY UPDATE ' +
+              'refresh_token=COALESCE(VALUES(refresh_token), refresh_token), ' +
+              'access_token=VALUES(access_token), ' +
+              'expiry_date=VALUES(expiry_date)'
+
+          console.log('Tokens', tokens)
+          knex.raw(insert)
+            .then(() => {
+              res.status(200)
+              res.send('OK')
+            })
+            .catch(error => {
+              console.log('Query error: ', error)
+              res.status(400)
+              res.send('Error occurred')
+            })
+        }
+      })
+    }
+  })
+})
+
+server.options('/youtube/url', cors(appCorsOptions))
+server.get('/youtube/url', cors(appCorsOptions), (req, res) => {
+  jwtAuthenticatedRequest(req, res, (decodedJwt, uuid) => {
+    const url = googleAuth.generateAuthUrl({
+      access_type: 'offline',
+      scope: [
+        'https://www.googleapis.com/auth/youtube',
+        'https://www.googleapis.com/auth/youtube.upload'
+      ]
+    })
+
+    res.status(200)
+    res.send(url)
+  })
+})
+
 server.options('/claim', cors(loginCorsOptions))
 server.post('/claim', cors(loginCorsOptions), (req, res) => {
   jwtAuthenticatedRequest(req, res, (decodedJwt, uuid) => {
     knex.select(['id']).from('auth_ticket').where({
-      'user_id': decodedJwt.sub,
+      user_id: decodedJwt.sub,
       uuid: knex.raw('UNHEX(REPLACE("' + uuid + '","-",""))')
     })
       .then(rows => {
@@ -287,5 +513,4 @@ server.listen(80, (err) => {
   }
 
   console.log('> Ready at http://' + process.env.HOST)
-  console.log('CORS: ', loginWhitelist)
 })

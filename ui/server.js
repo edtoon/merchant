@@ -29,6 +29,41 @@ app.prepare().then(() => {
   server.use(cookieParser())
   server.use(morgan('combined'))
 
+  server.get('/_youtube/oauth', (req, res) => {
+    if (!(req.query && req.query.code)) {
+      console.log('No code, redirecting to /youtube')
+      res.redirect('/youtube')
+    } else if (!(req.cookies && req.cookies.jwt)) {
+      console.log('Received code while not logged in', req.query.code)
+      res.redirect(proto + '://' + loginHost())
+    } else {
+      console.log('Handling code', req.query.code)
+      jwtVerify(req.cookies.jwt, 'GGUiSecret', (err, decoded) => {
+        if (!err && decoded.sub && decoded.sub === ('' + parseInt(decoded.sub, 10)) && decoded.iss && decoded.iss === (proto + '://' + currentHost)) {
+          console.log('Token verified, sending request to API')
+          fetch(proto + '://' + apiHost() + '/youtube/auth', {
+            method: 'POST',
+            headers: {
+              Authorization: 'Bearer ' + req.cookies.jwt,
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              code: req.query.code
+            })
+          })
+            .then(fetchResponse => {
+              console.log('Response from API', fetchResponse)
+              res.redirect('/youtube')
+            })
+        } else {
+          console.log('Received code but token was invalid')
+          res.redirect(proto + '://' + loginHost())
+        }
+      })
+    }
+  })
+
   server.get('/logout', (req, res) => {
     if (!req.headers || !req.headers.host || allowedHosts.indexOf(req.headers.host) < 0) {
       console.log('Invalid host header, redirecting to login')
@@ -40,7 +75,7 @@ app.prepare().then(() => {
         Expires: 0,
         'Set-Cookie':
         'jwt=; ' +
-        'Domain=' + req.headers.host + '; ' +
+        'Domain=.' + req.headers.host + '; ' +
         (proto === 'https' ? 'Secure; ' : '') +
         'Expires=Thu, 01 Jan 1970 00:00:00 GMT; ' +
         'Version=1',
@@ -133,7 +168,7 @@ app.prepare().then(() => {
   })
 
   server.get('*', (req, res) => {
-    if (req.originalUrl.startsWith('/_')) {
+    if (req.originalUrl.startsWith('/_next')) {
       return handle(req, res)
     } else if (!(req.cookies && req.cookies.jwt)) {
       res.redirect(proto + '://' + loginHost())

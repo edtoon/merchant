@@ -93,9 +93,7 @@ export default () => (
           <div className='main'>
             <div className='title'>Menu</div>
             <a href='#' className='item active'><span className='name'>Dashboard</span></a>
-            <a href='#' className='item'><span className='name'>Activity</span></a>
-            <a href='#' className='item'><span className='name'>Timeline</span></a>
-            <a href='#' className='item'><span className='name'>Folders</span></a>
+            <a href='/youtube' className='item'><span className='name'>YouTube</span></a>
             <a href='/logout' className='item'><span className='name'>Logout</span></a>
           </div>
         </div>
@@ -113,9 +111,7 @@ export default () => (
             </NavToggle>
             <div className='nav-right nav-menu is-hidden-tablet'>
               <a href='#' className='nav-item is-active'>Dashboard</a>
-              <a href='#' className='nav-item'>Activity</a>
-              <a href='#' className='nav-item'>Timeline</a>
-              <a href='#' className='nav-item'>Folders</a>
+              <a href='/youtube' className='nav-item'>YouTube</a>
               <a href='/logout' className='nav-item'>Logout</a>
             </div>
           </div>
