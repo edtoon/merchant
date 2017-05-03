@@ -5,6 +5,8 @@ import fetch from 'isomorphic-fetch'
 import { getCookie } from 'gg-common/utils/browser'
 import { apiHost } from 'gg-common/utils/hosts'
 
+import YouTubeChannelList from './YouTubeChannelList'
+
 export default class YouTubeForm extends React.Component {
   constructor (props) {
     super(props)
@@ -44,7 +46,10 @@ export default class YouTubeForm extends React.Component {
   render () {
     if (this.state.token) {
       return (
-        <b>Token: {this.state.token}</b>
+        <div>
+          <li>Token: {this.state.token}</li>
+          <YouTubeChannelList token={this.state.token} />
+        </div>
       )
     }
 
