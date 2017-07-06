@@ -1,7 +1,7 @@
 exports.up = function (knex, Promise) {
   return Promise.all([
     knex.schema.createTable('youtube_credential', t => {
-      t.integer('user_id').unsigned().references('user.id').primary()
+      t.integer('user_id').unsigned().primary().references('user.id')
       t.string('refresh_token', 191).notNull().unique()
       t.string('access_token', 191).notNull().unique()
       t.bigint('expiry_date').unsigned().notNull()
