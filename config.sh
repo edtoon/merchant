@@ -14,7 +14,7 @@ DATA_DIR="/mnt/gg/merchant/${APP_NAME}/data"
 
 if [ -z "${ENV}" ];
 then
-    if [ -f "/etc/ec2_version" ];
+    if [ -f "/etc/ec2_version" ] || [ -f "/etc/cloud/digitalocean.info" ];
     then
         ENV="production"
     else
