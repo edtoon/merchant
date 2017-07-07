@@ -420,6 +420,7 @@ server.get('/youtube/url', cors(appCorsOptions), (req, res) => {
   jwtAuthenticatedRequest(req, res, (decodedJwt, uuid) => {
     const url = googleAuth.generateAuthUrl({
       access_type: 'offline',
+      approval_prompt: 'force',
       scope: [
         'https://www.googleapis.com/auth/youtube',
         'https://www.googleapis.com/auth/youtube.upload'
